@@ -1394,7 +1394,6 @@ CREATE TABLE `wilayah_prov` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping routines for database 'u883486355_kkn'
 --
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
