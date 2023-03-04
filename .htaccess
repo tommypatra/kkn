@@ -1,0 +1,29 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* index.php/$0 [PT,L]
+
+RewriteCond %{SERVER_PORT} 80
+RewriteRule ^.*$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Follow symbolic links in this directory.
+Options +FollowSymLinks
+
+# disable directory browsing
+Options All -Indexes
+
+# PREVENT FOLDER LISTING
+IndexIgnore *
+
+# STRONG HTACCESS PROTECTION
+<Files ~ "^.*\.([Hh][Tt][Aa])">
+order allow,deny
+deny from all
+satisfy all
+</Files>
+
+# PROTECT AGAINST DOS ATTACKS BY LIMITING FILE UPLOAD SIZE
+LimitRequestBody 10240000
+
+# Set the default handler.
+DirectoryIndex index.php 

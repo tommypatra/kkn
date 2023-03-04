@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="User's walkthrough, popover, highlight, dynamic element targetting step-by-step guide">
+    <meta name="author" content="Julious Mark de leon">
+    <title>WebTour JS</title>
+    <link rel="icon" href="assets/webtour.svg">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@800&family=Roboto&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" integrity="sha512-PgQMlq+nqFLV4ylk1gwUOgm6CtIIXkKwaIHp/PAIWHzig/lKZSEGKEysh0TCVbHJXCLN7WetD8TFecIky75ZfQ==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/styles/default.min.css" integrity="sha512-kZqGbhf9JTB4bVJ0G8HCkqmaPcRgo88F0dneK30yku5Y/dep7CZfCnNml2Je/sY4lBoqoksXz4PtVXS4GHSUzQ==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/styles/darcula.min.css" integrity="sha512-0+Gq7jQLhuoMdL8EednGo8delKMhKim1t3XrvVGTqbJPfyv5f4HUJ0DTEN+3E+aM4RGEEfmVJOiomnP9olm4iw==" crossorigin="anonymous" />
+    <link href="https://unpkg.com/webtour@1.1.0/dist/webtour.min.css" rel="stylesheet">
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+<style>
+    body {
+        overflow-x: hidden!important;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Open Sans' sans-serif;        
+        font-weight: bolder;
+    }
+
+    p, li, a {
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+        letter-spacing: .8px;
+    }
+
+    pre, code {
+        font-size: 16px;
+    }
+
+    .navbar-brand {
+        font-family: 'Open Sans', sans-serif;
+        font-weight: bolder;
+        font-size: 28px;
+    }
+
+	.navbar {
+		padding: 1.5rem 3rem;
+		height: 100px;	
+	}
+	.navbar > div > a, a > i {
+		color: #495057;
+	}
+	
+	main {
+		background: #F1F3F5;
+	}
+
+    .wt-primary {
+        background-color: #7cd1f9;
+        color: #fff;
+    }
+
+    .wt-primary:hover {
+        background-color: #56C4F8;
+        color: #fff;
+    }
+
+    .btn-demo {
+        color: #fff;
+        font-weight: bolder;
+        transition: all .5s ease;
+    }
+    .btn-demo:hover {
+        border-radius: 25px;
+        color: #fff;
+        font-weight: bolder;
+    }
+
+    .placement {
+        height: 100px;
+        width: 100px;
+        display: flex;
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    input[type=radio]:after {
+        width: 20px;
+        height: 20px;
+        border-radius: 20px;
+        top: -2px;
+        left: -1px;
+        position: relative;
+        background-color:#7A7A7A;
+        content: '';
+        display: inline-block;
+        visibility: visible;
+        border: 2px solid white;
+    }
+
+    input[type=radio]:checked:after {
+        width: 20px;
+        height: 20px;
+        border-radius: 20px;
+        top: -2px;
+        left: -1px;
+        position: relative;
+        background-color:#0DCAF0;
+        content: '';
+        display: inline-block;
+        visibility: visible;
+        border: 2px solid #0DCAF0;
+    }
+
+</style>
+  </head>
+  <body>
+    
+<header> 
+  <div class="navbar navbar-white bg-white shadow-sm">
+    <div class="container-fluid container-xl">
+      <a href="#" class="navbar-brand d-flex align-items-center">
+          <img src="assets/webtour.svg" style="margin-right: 10px;">
+        <b>WEBTOUR JS</b>
+      </a>
+	  <div>
+		  <a href="https://github.com/votch18/webtour.js"><i class="fab fa-github fa-2x"></i></a>		
+	  </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="pt-5 text-center">
+    <div class="row">
+      <div class="col-xl-6 col-lg-8 mx-auto">
+        <h1 class="fw-bold" id="title">A light-weight user's step-by-step guide for your website using Vanilla JS.</h1>
+        <p class="lead text-muted"></p>
+        <p>          
+          <a href="javascript:void(0)" class="btn wt-primary shadow-sm my-2 btn-lg mx-1" id="demo">Show demo</a>
+          <a href="javascript:void(0)" class="btn btn-light shadow-sm my-2 btn-lg mx-1">Get started &#8594;</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="py-5">
+    <div class="container">
+
+      <div class="row" style="max-width: 100%;">
+        <div class="col-lg-6 offset-lg-3 pb-5">
+          <div class="card shadow-sm">           
+            <div class="card-body px-4 pb-5">
+                <div id="features" class="mb-5">
+                    <h2 class="my-3" id="features">Features</h2>
+                    <hr/>
+                    <ul>
+                        <li class="features-1"><b>Highlight element</b> - can highlight specific element on the page without modifying the element position and style.</li>
+                        <li><b class="features-2">User's walkthrough</b> - can be used to guide user's to your website using modals and popovers.</li>
+                        <li class="features-3"><b>Slideshow</b> - can be use as slideshow within your website.</li>                       
+                        <li class="features-4"><b>Dynamic element targetting</b> - can target dynamically created element during tour.</li>
+                        <li class="features-5"><b>Auto scroll</b> - automatically scroll to popover's position.</li>
+                        <li class="features-6"><b>Keyboard control</b> - allows control using next, back and esc keys.</li>
+                        <li class="features-7"><b>Update position on resize.</b></li>
+                    </ul>
+                </div>
+                
+                <div id="highlight" class="mb-5">
+                    <h2>How does WebTour highlight works?</h2>
+                    <hr/>
+                    <p>WebTour highlight works by adding overlay to the page except for the highlighted element. It is basically an overlay with a hole showing the element that is highlighted. WebTour can highlight even on modals.</p>
+                </div>
+
+                <div id="installation" class="mb-5">
+                    <h2>Installation</h2>
+                    <hr/>
+                    <p>Include the files from /dist directory.</p>
+                    <pre><code class="html">&lt;link rel="stylesheet" href="/dist/webtour.min.css"&gt;<br/>&lt;script src="/dist/webtour.min.js"&gt;&lt;/script&gt;</code></pre>
+                    <p>Or include by using UNPKG.</p>
+                    <pre><code class="html">&lt;link rel="stylesheet" href="https://unpkg.com/webtour@1.1.0/dist/webtour.min.css"&gt;<br/>&lt;script src="https://unpkg.com/webtour@1.1.0/dist/webtour.min.js"&gt;&lt;/script&gt;</code></pre>
+                </div>
+
+                <div id="usage" class="mb-5">
+                    <h2 class="mb-3">Basic usage</h2>
+                    <hr/>
+                    <div class="highlight-me">
+                        <h4 class="my-3">Highlight an element</h4>
+                        <p>Highlight an element without popover. Can be used to focus user's attention to an element.</p>
+                        <pre><code class="javascript">const wt = new WebTour();<br/>wt.highlight('#target');</code></pre>  
+                    </div>                                 
+                    <button class="btn btn-info btn-demo w-100" id="btn-highlight">Show Me</button>
+                </div>
+                <div id="step_1" class="mb-5">                   
+                    <h4 class="my-3" id="step_2">User's walkthrough</h4>
+                    <p id="step_3">Guide user's to your website by using step-by-step guide.</p>                    
+                    <pre id="step_4">
+<code class="javascript">const wt = new WebTour();
+const steps = [
+    {
+        element: '#step_1',            
+        title: 'Popover title',         
+        content: 'Popover content',    
+        placement: 'right-start',      
+    },
+    {
+        element: '#step_2',            
+        title: 'Popover title',         
+        content: 'Popover content',     
+        placement: 'right-start',       
+    },
+    {
+        element: '#step_3',            
+        title: 'Popover title',         
+        content: 'Popover content',     
+        placement: 'right-start',       
+    },
+];
+
+wt.setSteps(steps);
+wt.start();</code></pre>         
+                    <button class="btn btn-info btn-demo w-100" id="btn-guide">Show Me</button>       
+                </div>
+
+                <div>
+                    <h4 class="my-3">Placement</h4>
+                    <p>Similar to <a href="https://popper.js.org/">Popover JS</a> placement. <em>(top, top-start, top-end, right, right-start, right-end, left, left-start, left-end, bottom, bottom-start, bottom-end, auto)</em></p>           
+                    <div id="positioning" style="display: flex; align-items: center; justify-content: space-between; background: #7A7A7A; padding: 15px;">
+                        <div>
+                            <div class="placement" style="flex-direction: column; align-items: flex-start; justify-content: space-between;">
+                                <input type="radio" name="placement" value="left-start">
+                                <input type="radio" name="placement" value="left">
+                                <input type="radio" name="placement" value="left-end">
+                            </div>
+                           
+                        </div>
+                        <div>
+                            <div class="placement" style="align-items: flex-start; justify-content: space-between;">
+                                <input type="radio" name="placement" value="top-start">
+                                <input type="radio" name="placement" value="top">
+                                <input type="radio" name="placement" value="top-end">
+                            </div>
+                            <div class="placement" id="placement_target" style="background: url('./assets/webtour.svg') #0DCAF0 50% 50% no-repeat;"></div>
+                            <div class="placement" style="align-items: flex-end; justify-content: space-between;">
+                                <input type="radio" name="placement" value="bottom-start">
+                                <input type="radio" name="placement" value="bottom">
+                                <input type="radio" name="placement" value="bottom-end">
+                            </div>
+                        </div>
+                        <div>
+                          
+                            <div class="placement" style="flex-direction: column; align-items: flex-end; justify-content: space-between;">
+                                <input type="radio" name="placement" value="right-start">
+                                <input type="radio" name="placement" value="right">
+                                <input type="radio" name="placement" value="right-end">
+                            </div>
+                           
+                        </div>                        
+                    </div>    
+                </div>
+                <div class="mt-3">    
+                    <!-- Place this tag where you want the button to render. -->
+                    <a class="github-button" href="https://github.com/votch18" data-size="large" aria-label="Follow @votch18 on GitHub">Follow @votch18</a>   
+                   <!-- Place this tag where you want the button to render. -->
+                    <a class="github-button" href="https://github.com/votch18/webtour.js" data-icon="octicon-star" data-size="large" aria-label="Star votch18/webtour.js on GitHub">Star</a>
+				    <form action="https://www.paypal.com/donate" method="post" target="_top" style="width: 80px; display: inline-block;">
+                        <input type="hidden" name="hosted_button_id" value="WJ9DU2VMU2RAL" />
+                        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+                        <img alt="" border="0" src="https://www.paypal.com/en_PH/i/scr/pixel.gif" width="1" height="1" />
+                    </form>
+                </div>
+
+            </div>
+          </div>
+        </div>
+       
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="text-muted py-5">
+  <div class="container">
+    <p class="float-end mb-1">
+      <a href="#">Back to top</a>
+    </p>
+    <p class="mb-1">Crafted with <i class="fa fa-heart" style="color: #f00;"></i> by <a href="https://github.com/votch18">JM de Leon</a></p>   
+  </div>
+</footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/codemirror.min.js" integrity="sha512-zuvaVNiXwWY7U7HEdXsoTislTEElpKLELFoyQw0Bg7zfGhC4vG8eAhCxIQAvHmprW7dFhTq5zshUko4K3B4mSA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.4.1/highlight.min.js" integrity="sha512-DrpaExP2d7RJqNhXB41Q/zzzQrtb6J0zfnXD5XeVEWE8d9Hj54irCLj6dRS3eNepPja7DvKcV+9PnHC7A/g83A==" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/webtour@1.1.0/dist/webtour.min.js"></script>
+
+    <script>
+
+        window.onload = ()=> {
+
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightBlock(block);
+            });
+
+            document.getElementById("demo").addEventListener("click", function() {
+                var wt = new WebTour();
+                var steps = [
+                    {  
+                        content: `<div style="text-align: center; padding: 30px;">                    
+                                    <img src="assets/webtour.svg" >
+                                    <h3 style="text-align: center;">Welcome to WebTour JS</h3>
+                                </div>`, 
+                        width: '500px'
+                    },
+                    {
+                        element: '#title',
+                        title: 'Web Tour can highlight all visible and dynamically created elements.',
+                        content: '(Works even on modals, just set the z-index higher to the modal you are targetting)',    
+                        placement: 'bottom-start',
+                    },
+                    {
+                        element: '#features',
+                        title: 'What are the features of WebTour JS?',
+                        placement: 'top-start',
+                    },
+                    {
+                        element: '.features-1',
+                        title: 'Highlight an element',
+                        placement: 'left-start',
+                    },
+                    {
+                        element: '.features-2',
+                        title: 'Can be use to create user\'s walkthrough to introduce your website.',
+                        placement: 'bottom-end',
+                    },
+                    {
+                        element: '.features-3',
+                        title: 'Can be use as slideshow.',
+                        placement: 'right-start',
+                    },
+                    {
+                        element: '.features-4',
+                        title: 'Can target dynamically created element.',
+                        placement: 'right-start',
+                        onNext: function(){
+                            wt.isPaused = true;
+                            var dynamicTarget = document.createElement('div');
+                            dynamicTarget.id = 'dynamictarget';   
+                            dynamicTarget.style.position = 'absolute';
+                            dynamicTarget.style.height = '300px';
+                            dynamicTarget.style.width = '300px';
+                            dynamicTarget.style.top = 'calc(50% - 150px)';
+                            dynamicTarget.style.left = 'calc(50% - 150px)';
+                            dynamicTarget.style.padding = '10px';
+                            dynamicTarget.style.fontFamily = 'Open Sans, sans-serif';
+                            dynamicTarget.style.background = 'rgb(124, 209, 249)';
+                            //dynamicTarget.style.transform = 'translate(-50%, -50%)';
+                            document.body.appendChild(dynamicTarget);
+                            //make sure target is visible
+                            setTimeout(function(){
+                                wt.moveNext();
+                            }, 500)       
+                        }
+                    },
+                    {
+                        element: '#dynamictarget',
+                        title: 'I\'m a dynamically created element!',
+                        placement: 'top-end',
+                        onNext: function(){
+                            var dynamicTarget = document.querySelector('#dynamictarget');
+                            dynamicTarget.remove();                    
+                        }                
+                    },
+                    {
+                        element: '.features-5',
+                        title: 'Auto-scroll to element\'s position',
+                        placement: 'bottom-end',
+                        onPrevious: function() {
+                            wt.isPaused = true;
+                            var dynamicTarget = document.createElement('div');
+                            dynamicTarget.id = 'dynamictarget';   
+                            dynamicTarget.style.position = 'absolute';
+                            dynamicTarget.style.height = '300px';
+                            dynamicTarget.style.width = '300px';
+                            dynamicTarget.style.top = 'calc(50% - 150px)';
+                            dynamicTarget.style.left = 'calc(50% - 150px)';
+                            dynamicTarget.style.padding = '10px';
+                            dynamicTarget.style.fontFamily = 'Open Sans, sans-serif';
+                            dynamicTarget.style.background = 'rgb(124, 209, 249)';
+                            //dynamicTarget.style.transform = 'translate(-50%, -50%)';
+                            document.body.appendChild(dynamicTarget);
+                            //make sure target is visible
+                            setTimeout(function(){
+                                wt.movePrevious();
+                            }, 500)       
+                        }
+                    },
+                    {
+                        element: '.features-6',
+                        title: 'Navigate using next, back and esc keys.',  
+                        placement: 'bottom-start',
+                    },
+                    {
+                        element: '.features-7',
+                        title: 'Re-position popover and highlight on window resize.',
+                        placement: 'top-start',
+                    },
+                    {               
+                        content: `<div style="text-align: center; padding: 30px;">                    
+                                    <img src="assets/webtour.svg" >
+                                    <h3 style="text-align: center;">That's the end of our tour! Check-out other features below.</h3>
+                                </div>`, 
+                        width: '500px'
+                    }]
+            
+
+                wt.setSteps(steps);          
+                wt.start();    
+            });
+
+            document.getElementById("btn-highlight").addEventListener("click", function() {
+                const wt = new WebTour();
+                wt.highlight('.highlight-me');
+
+            });
+
+            document.getElementById("btn-guide").addEventListener("click", function() {
+                var wt = new WebTour();
+                var steps = [  
+                    {
+                        element: '#step_1',
+                        title: 'This is step 1.',
+                        placement: 'top-start',
+                    },
+                    {
+                        element: '#step_2',
+                        title: 'This is step 2.',
+                        placement: 'right-start',
+                    },
+                    {
+                        element: '#step_3',
+                        title: 'This is step 3.',
+                        placement: 'right-start',
+                    },
+                    {
+                        element: '#step_4',
+                        title: 'This is step 4.',
+                        placement: 'right-start'                    
+                    }]
+
+                wt.setSteps(steps);          
+                wt.start();  
+
+            })
+
+            this.document.querySelectorAll('input[name="placement"]').forEach((element) => {
+                element.addEventListener("click", function() {
+                    const wt = new WebTour({highlightOffset: 10});
+                    const step = [{
+                        element: '#placement_target',
+                        title: element.value,
+                        placement: element.value,
+                        width: 200,
+                        showBtns: false,
+                    }];
+                    wt.highlight('#placement_target', step);
+                });
+            })
+
+        }
+
+        
+                
+    </script>
+      
+  </body>
+</html>

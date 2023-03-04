@@ -1,0 +1,12 @@
+.select2-container--default .select2-search--inline .select2-search__field:focus {
+    outline: 0;
+    border: 0px solid #80bdff;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #e7eaed;
+    border-color: #AEB6BF;
+    color: #000;
+    padding: 0 23px;
+    margin-top: 0.31rem;
+}

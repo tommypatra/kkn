@@ -1,0 +1,34 @@
+.row-tengah {
+  vertical-align: middle;
+}
+
+/* begin select2 */
+.select2 {
+  width:100%!important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered{
+  color:#607080;
+}
+.select2-container .select2-selection--single .select2-selection__rendered{
+  height:36px;
+  padding-top:4px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow{
+  top:4px;
+}
+.select2-container--default .select2-selection--single .select2-selection__clear{
+  padding-top:5px;  
+}
+/* end select2 */
+
+.form-control{
+  border: 1px solid #aaa;
+}
+
+.myclear-input{
+  border: none; 
+  border-color: transparent; 
+  outline: none;
+  font-size:12px
+}
