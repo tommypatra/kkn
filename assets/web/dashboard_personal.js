@@ -83,6 +83,8 @@ $("#form-profil-posko").submit(function(e){
         formVal.append('idposko', idposko);  
         formVal.append('alamat', alamat);  
         formVal.append('proker', proker);  
+        formVal.append('latitude', latitude);  
+        formVal.append('longitude', longitude);
         formVal.append('file', file_data);        
         //console.log(vurl);
         $.ajax({
