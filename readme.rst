@@ -42,6 +42,13 @@ Installation
 Please see the `installation section <https://codeigniter.com/userguide3/installation/index.html>`_
 of the CodeIgniter User Guide.
 
+************
+User Admin
+************
+
+User : admin@thisapp.com
+pass : admin
+
 *******
 License
 *******
