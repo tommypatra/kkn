@@ -39,9 +39,6 @@ function loadlkh(lastid,limit=null){
                 if(lastid<1){
                     if(vRet.db.length>0)
                         $("#daftarlkh").append(vRet.db[0]);
-                    else
-                        $("#daftarlkh").html("LKH TIDAK DITEMUKAN");
-                    //alert("LKH tidak ditemukan")
                 }
                 $("#loadMoreLKH").hide();        
             }
