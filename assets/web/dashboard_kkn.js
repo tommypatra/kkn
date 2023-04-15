@@ -37,8 +37,11 @@ function loadlkh(lastid,limit=null){
                 });                    
             }else{
                 if(lastid<1){
-                    $("#daftarlkh").append(vRet.db[0]);
-                    //$("#daftarlkh").html("LKH TIDAK DITEMUKAN");
+                    if(vRet.db.length>0)
+                        $("#daftarlkh").append(vRet.db[0]);
+                    else
+                        $("#daftarlkh").html("LKH TIDAK DITEMUKAN");
+                    //alert("LKH tidak ditemukan")
                 }
                 $("#loadMoreLKH").hide();        
             }
