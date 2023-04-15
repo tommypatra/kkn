@@ -55,7 +55,6 @@ class Prodi extends CI_Controller
         $this->datatables->select("
 			'' as cek, '' as no, '' as aksi,
             p.id, p.prodi, p.idfakultas, f.fakultas,
-            CAST(p.id AS UNSIGNED INTEGER) as id,
 		");
 
         $this->datatables->from("mst_prodi as p");
