@@ -39,15 +39,30 @@ issues, as well as missing features.
 Installation
 ************
 
-Please see the `installation section <https://codeigniter.com/userguide3/installation/index.html>`_
-of the CodeIgniter User Guide.
+Konfig application/config/config.php pada baris ke 534 (sesuaikan saja)
+
+Konfig application/config/database_def.php
+1. rename ke database.php
+2. sesuaikan setingan database anda
+3. restore database di folder db/
+
+Konfig application/helpers/web_helper.php
+function allowheader() baris 30 set sesuai nama domain anda 
+
+Konfig application/helpers/mail_helper.def.php
+1. rename ke mail_helper.php
+2. set pass email pada layanan 2 step verification
+3. sesuikan setingan password ke dalam mail_helper.php
+
+Sesuaikan logo pada folder assets/img/
 
 ************
 User Admin
 ************
 
 User : admin@thisapp.com
-pass : admin
+pass : admin1234
+
 
 *******
 License

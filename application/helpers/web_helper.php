@@ -27,12 +27,13 @@ if (!function_exists('gantikarakter')) {
 if (!function_exists('allowheader')) {
 	function allowheader($content_type = "application/json")
 	{
+		$thisdomain = 'kkn.iainpare.ac.id';
 		$allow = [
-			'kkn.iainpare.ac.id',
+			$thisdomain,
 		];
 
 		//debug($_SERVER);
-		$http_origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : "https://kkn.iainpare.ac.id";
+		$http_origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : "https://" . $thisdomain;
 		$web_origin = parse_url($http_origin);
 
 		Header("Access-Control-Allow-Origin: " . $http_origin);
