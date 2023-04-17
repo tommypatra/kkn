@@ -52,7 +52,8 @@ $('#idkecamatan').on('select2:select', function (e) {
     cariwilayah("#iddesa", null, null, $("#idkecamatan").val(), false);
 });
 
-function cariwilayah(vselector, idprovinsi = null, idkabupaten = null, idkecamatan = null, pilihdef = null) {
+function cariwilayah(vselector=null, idprovinsi = null, idkabupaten = null, idkecamatan = null, pilihdef = null) {
+    let vurl=null;
     if (idprovinsi) {
         vurl = "api/carigeneral";
         cari = {
@@ -82,20 +83,22 @@ function cariwilayah(vselector, idprovinsi = null, idkabupaten = null, idkecamat
         };
     }
 
-    appAjax(vurl, cari, false).done(function (vRet) {
-        $(vselector).empty();
-        var newOption = new Option("", "", true, true);
-        $(vselector).append(newOption).trigger('change');
-        if (vRet.status) {
-            $.each(vRet.db, function (k, v) {
-                var newOption = new Option(v.text, v.id, false, false);
-                $(vselector).append(newOption).trigger('change');
-            });
+    if(vurl){
+        appAjax(vurl, cari, false).done(function (vRet) {
+            $(vselector).empty();
+            var newOption = new Option("", "", true, true);
+            $(vselector).append(newOption).trigger('change');
+            if (vRet.status) {
+                $.each(vRet.db, function (k, v) {
+                    var newOption = new Option(v.text, v.id, false, false);
+                    $(vselector).append(newOption).trigger('change');
+                });
 
-            if(pilihdef)
-                $(vselector).val(pilihdef).trigger('change');
-        }
-    });
+                if(pilihdef)
+                    $(vselector).val(pilihdef).trigger('change');
+            }
+        });
+    }
 }
 
 function loadprofil(){
