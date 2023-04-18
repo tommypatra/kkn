@@ -51,6 +51,27 @@ if (!function_exists('allowheader')) {
 	}
 }
 
+if (!function_exists('allowdomain')) {
+	function allowdomain($email)
+	{
+		$retval = array("status" => true, "pesan" => []);
+		$allow = [
+			// 'gmail.com',
+			'iainpare.ac.id',
+		];
+		$CI = get_instance();
+		if (!in_array($email, $allow)) {
+			$retval = array("status" => false, "pesan" => ["tidak diperbolehkan"]);
+
+			if (!$CI->input->is_ajax_request()) {
+				$CI->session->set_flashdata('retval', $retval);
+				redirect(base_url());
+			}
+		}
+		return $retval;
+	}
+}
+
 
 if (!function_exists('encdec')) {
 	function encdec($action, $string)

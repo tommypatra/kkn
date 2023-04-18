@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $this->config->item("app_name") ?></title>
-    <link href="<?= base_url('assets/bootstrap.min.css') ?>" rel="stylesheet">
     <link rel="stylesheet" href="<?= base_url('templates/mazer/assets/css/main/app.css?' . date('ymdhis')) ?>">
 
     <link rel="shortcut icon" href="<?= base_url('assets/img/favicon.ico') ?>" type="image/x-icon">
@@ -77,7 +76,6 @@
 
     <!-- jQuery -->
     <script src="<?= base_url('assets/plugins/') ?>jquery/jquery.min.js"></script>
-    <script src="<?= base_url('assets/bootstrap.bundle.min.js') ?>"></script>
 
     <script src="<?= base_url('templates/mazer/') ?>assets/js/pages/horizontal-layout.js"></script>
 

@@ -111,7 +111,7 @@ class Jadwal extends CI_Controller
             $tmp['aksi'] = "<div class='btn-group me-1 mb-1'>
                                 <div class='dropdown'>
                                     <button type='button' class='btn btn-primary dropdown-toggle' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'></button>
-                                    <div class='dropdown-menu dropdown-menu-end' style=''>
+                                    <div class='dropdown-menu dropdown-menu-end'>
                                         <a class='dropdown-item editRow' data-pilih='" . $no . "' data-id='" . $dp['id'] . "' href='#'><i class='bi bi-pencil-square'></i> Ganti</a>
                                         <a class='dropdown-item deleteRow' data-pilih='" . $no . "' data-id='" . $dp['id'] . "' href='#'><i class='bi bi-trash'></i> Hapus</a>
                                     </div>

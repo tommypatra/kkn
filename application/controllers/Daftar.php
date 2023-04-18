@@ -70,12 +70,11 @@ class Daftar extends CI_Controller
             }
 
             $cekemail = extractemail($retVal['email']);
+            $allowmail = allowdomain($cekemail[2]);
             //debug($cekemail);
 
-
-            //untuk batasi domain email 
-            if ($cekemail[2] != 'iainpare.ac.id') {
-                $pesan[] = "Pendaftaran hanya menggunakan email institusi @iainpare.ac.id";
+            if (!$allowmail['status']) {
+                $pesan[] = "Pendaftaran hanya menggunakan email terbatas, hubungi admin";
                 goto next;
             }
 

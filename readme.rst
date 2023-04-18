@@ -54,6 +54,8 @@ Konfig application/helpers/mail_helper.def.php
 2. set pass email pada layanan 2 step verification
 3. sesuikan setingan password ke dalam mail_helper.php
 
+Sesuaikan profil web anda pada application/views/importhead.php
+
 Sesuaikan logo pada folder assets/img/
 
 ************

@@ -217,11 +217,11 @@ class Akun extends CI_Controller
             $this->form_validation->set_rules('pass1', 'Password', 'required|min_length[8]');
             $this->form_validation->set_rules('pass2', 'Ulangi password', 'required|matches[pass1]');
         }
-        $idgrup = $this->input->post('idgrup');
-        if (count($idgrup) < 1) {
-            $retVal['pesan'] = "grup tidak boleh kosong";
-            die(json_encode($retVal));
-        }
+        // $idgrup = $this->input->post('idgrup');
+        // if (count($idgrup) < 1) {
+        //     $retVal['pesan'] = "grup tidak boleh kosong";
+        //     die(json_encode($retVal));
+        // }
 
         if ($this->form_validation->run()) {
             $dataSave = $this->input->post();

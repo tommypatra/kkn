@@ -47,6 +47,14 @@ class Akun extends CI_Controller
         $this->load->view('app/index', $this->d);
     }
 
+    public function loadprovinsi()
+    {
+        $this->load->library("Dataweb");
+        $retVal = $this->dataweb->loadprovinsi();
+
+        die(json_encode($retVal));
+    }
+
     public function load()
     {
         $this->load->library("Dataweb");
@@ -56,6 +64,7 @@ class Akun extends CI_Controller
             array("cond" => "where", "fld" => "u.id", "val" => $this->session->userdata("iduser")),
         );
         $retVal = $this->dataweb->loadprofil($vCari);
+
         die(json_encode($retVal));
     }
 

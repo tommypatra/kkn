@@ -1,9 +1,11 @@
 sel2_jeniskelamin("#kel");
 
+sel2_datalokal("#idprovinsi", null, false);
 sel2_datalokal("#idkabupaten", null, false);
 sel2_datalokal("#idkecamatan", null, false);
 sel2_datalokal("#iddesa", null, false);
 loadprofil();
+loadprovinsi();
 
 let waktu = new Date(); 
 let tgl_1 = waktu.getDate() + "-"+ (waktu.getMonth()+1)  + "-" + waktu.getFullYear();
@@ -16,39 +18,45 @@ $('.datepicker').bootstrapMaterialDatePicker({
 
 
 // --------------------SELECT 2------------------------
-$("#idprovinsi").select2({
-    minimumInputLength: 3,
-    dropdownAutoWidth: true,
-    delay: vDelay,
-    placeholder: '- cari -',
-    ajax: {
-        dataType: 'json',
-        url: vBase_url + 'master/provinsi/cari',
-        timeout: vTimeout,
-        type: 'post',
-        data: function (params) {
-            return {
-                vField: "id,provinsi as text",
-                vCari: { 0: { cond: 'like', val: params.term, fld: 'provinsi' }, },
-            }
-        },
-        processResults: function (data, params) {
-            return {
-                results: data.db,
-            };
-        },
-    },
-});
+// $("#idprovinsi").select2({
+//     minimumInputLength: 3,
+//     dropdownAutoWidth: true,
+//     delay: vDelay,
+//     placeholder: '- cari -',
+//     ajax: {
+//         dataType: 'json',
+//         url: vBase_url + 'master/provinsi/cari',
+//         timeout: vTimeout,
+//         type: 'post',
+//         data: function (params) {
+//             return {
+//                 vField: "id,provinsi as text",
+//                 vCari: { 0: { cond: 'like', val: params.term, fld: 'provinsi' }, },
+//             }
+//         },
+//         processResults: function (data, params) {
+//             return {
+//                 results: data.db,
+//             };
+//         },
+//     },
+// });
 
 $('#idprovinsi').on('select2:select', function (e) {
+    $("#idkabupaten").empty();
+    $("#idkecamatan").empty();
+    $("#iddesa").empty();
     cariwilayah("#idkabupaten", $("#idprovinsi").val(), null, null, false);
 });
 
 $('#idkabupaten').on('select2:select', function (e) {
+    $("#idkecamatan").empty();
+    $("#iddesa").empty();
     cariwilayah("#idkecamatan", null, $("#idkabupaten").val(), null, false);
 });
 
 $('#idkecamatan').on('select2:select', function (e) {
+    $("#iddesa").empty();
     cariwilayah("#iddesa", null, null, $("#idkecamatan").val(), false);
 });
 
@@ -101,6 +109,22 @@ function cariwilayah(vselector=null, idprovinsi = null, idkabupaten = null, idke
     }
 }
 
+function loadprovinsi(){
+    let vselector="#idprovinsi";
+
+    appAjax("akun/loadprovinsi", {}).done(function(vRet) {
+        if(vRet.status){
+            $(vselector).empty();
+            var newOption = new Option("", "", true, true);
+            $(vselector).append(newOption).trigger('change');
+            $.each(vRet.db, function (k, v) {
+                var newOption = new Option(v.provinsi, v.id, false, false);
+                $(vselector).append(newOption).trigger('change');
+            });
+        }
+    });
+}
+
 function loadprofil(){
     appAjax("akun/load", {}).done(function(vRet) {
         if(vRet.status){
@@ -121,12 +145,9 @@ function loadprofil(){
 
             $("#pasfoto").attr("src",vBase_url+data.path);
                 
-
             //load provinsi
             let vselector="#idprovinsi";
-            $(vselector).empty();     
-            var newOption = new Option(data.provinsi, data.idprovinsi, false, false);
-            $(vselector).append(newOption).trigger('change');   
+            $(vselector).val(data.idprovinsi).trigger('change');   
             //end load provinsi
 
             //load kabupaten
