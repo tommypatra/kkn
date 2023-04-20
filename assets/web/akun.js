@@ -1,11 +1,12 @@
-sel2_jeniskelamin("#kel");
+loadprovinsi();
 
+sel2_jeniskelamin("#kel");
 sel2_datalokal("#idprovinsi", null, false);
 sel2_datalokal("#idkabupaten", null, false);
 sel2_datalokal("#idkecamatan", null, false);
 sel2_datalokal("#iddesa", null, false);
+
 loadprofil();
-loadprovinsi();
 
 let waktu = new Date(); 
 let tgl_1 = waktu.getDate() + "-"+ (waktu.getMonth()+1)  + "-" + waktu.getFullYear();
