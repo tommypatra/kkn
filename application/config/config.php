@@ -531,10 +531,13 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
-$config['app_name'] = 'KPM IAIN Parepare';
-$config['app_singkatan'] = 'KPM';
+$config['app_name'] = 'KKN IAIN Parepare';
+$config['app_singkatan'] = 'KKN';
 $config['app_version'] = 'v2.0';
 $config['app_transaction'] = true;
+
+$config['app_latitude'] = -4.008333;
+$config['app_longitude'] = 119.629185;
 
 $config['tahunapp'] = 2022;
 $config['ajax_timeout'] = 10000;

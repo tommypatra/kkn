@@ -86,6 +86,7 @@
                                     <div class="form-group">
                                         <label>Tanggal Lahir</label>
                                         <input type="text" name="tgllahir" id="tgllahir" class="form-control validate[required] datepicker" placeholder="tanggal lahir">
+                                        <div id="btn-resettgllahir">Reset Tanggal</div>
                                     </div>
                                 </div>
                             </div>
@@ -148,7 +149,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Handphone</label>
-                                <input type="text" name="hp" id="hp" class="form-control validate[required] datepicker" placeholder="tanggal lahir">
+                                <input type="text" name="hp" id="hp" class="form-control validate[required]" placeholder="tanggal lahir">
                             </div>
                         </div>
                     </div>

@@ -60,7 +60,7 @@ class Resetpass extends CI_Controller
         $this->db->select("rp.*,u.*");
         $this->db->join("user as u", "u.id=rp.iduser", "left");
         //$this->db->where("rp.aktif", "n");
-        $this->db->where("DATE_ADD(NOW(), INTERVAL 8 HOUR)<rp.expired", null);
+        $this->db->where("NOW()<rp.expired", null);
         $this->db->where("rp.token", $token);
         $cekDt = $this->db->get();
         //echo $this->db->last_query();
@@ -94,9 +94,10 @@ class Resetpass extends CI_Controller
             //debug($cekUsr);
             if ($cekUsr->num_rows() > 0) {
                 $akun = $cekUsr->row();
+                $maks = 7;
                 $jumtoken = $this->jumtoken($fldUsr);
-                if ($jumtoken['jumlah'] >= 3) {
-                    $pesan = ["Reset password dalam 1 hari dibatasi hanya 3 kali, coba besok lagi atau akses link yang telah dikirim ke email anda pada hari ini jika masih berlaku"];
+                if ($jumtoken['jumlah'] >= $maks) {
+                    $pesan = ["Reset password dalam 1 hari dibatasi hanya " . $maks . " kali, coba besok lagi atau akses link yang telah dikirim ke email anda pada hari ini jika masih berlaku"];
                     goto next;
                 }
                 $tb = "reset_password";
@@ -117,7 +118,7 @@ class Resetpass extends CI_Controller
                 $token = rand(100, 999) . date("m") . date("H") . $akun->id . date("i") . date("Y") . date("d") . date("s");
                 $linkreset = base_url('resetpass/' . $token);
                 $created = date("Y-m-d H:i:s");
-                $expired = date("Y-m-d H:i:s", strtotime("+30 minutes"));
+                $expired = date("Y-m-d H:i:s", strtotime("+120 minutes"));
 
                 $dataSave = array(
                     "iduser" => $akun->id,

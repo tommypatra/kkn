@@ -17,6 +17,9 @@ $('.datepicker').bootstrapMaterialDatePicker({
     time: false,
 });
 
+$('#btn-resettgllahir').click(function(){
+    $("#tgllahir").val((waktu.getFullYear()-20) + "-"+ (waktu.getMonth()+1)  + "-" + waktu.getDate());
+});
 
 // --------------------SELECT 2------------------------
 // $("#idprovinsi").select2({

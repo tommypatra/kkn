@@ -58,4 +58,6 @@ if (count($importCss) > 0) {
     var vTimeout = <?= $this->config->item('ajax_timeout') ?>;
     var vLimitRows = <?= $this->config->item('limit_rows') ?>;
     var vDelay = <?= $this->config->item('delay') ?>;
+    var vLatitude = <?= $this->config->item('app_latitude') ?>;
+    var vLongitude = <?= $this->config->item('app_longitude') ?>;
 </script>
