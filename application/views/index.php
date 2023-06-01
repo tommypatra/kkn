@@ -76,7 +76,7 @@
 
     <!-- jQuery -->
     <script src="<?= base_url('assets/plugins/') ?>jquery/jquery.min.js"></script>
-    <!-- <script src="<?= base_url('assets/bootstrap.bundle.min.js') ?>"></script> -->
+    <script src="<?= base_url('assets/boostrap.min.js') ?>"></script>
 
     <script src="<?= base_url('templates/mazer/') ?>assets/js/pages/horizontal-layout.js"></script>
 

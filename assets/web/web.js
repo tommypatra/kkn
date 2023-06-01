@@ -39,11 +39,16 @@ $(".act-aktifitas").click(function(e){
     let vtitle=$(this).html();
     let vkategori=$(this).data("kategori");
     $("#modal-aktifitas .modal-title").html($(this).html());
-    var myModal = new bootstrap.Modal(document.getElementById('modal-aktifitas'), {
-        backdrop: 'static',
-        keyboard: false,
-    });
-    myModal.toggle();
+
+    // var myModal = new bootstrap.Modal('#modal-aktifitas', {
+    //     backdrop: 'static',
+    //     keyboard: false,
+    // });
+    // myModal.toggle();
+
+    var myModal = new bootstrap.Modal(document.getElementById('modal-aktifitas'))
+    myModal.show()    
+
     let cari= {
         title:vtitle,
         kategori:vkategori,
@@ -59,12 +64,14 @@ $(".act-aktifitas").click(function(e){
 $(".act-kelompok").click(function(e){
     e.preventDefault();
     let vtitle="Kelompok Teraktif";
+
     $("#modal-aktifitas .modal-title").html($(this).html());
     var myModal = new bootstrap.Modal(document.getElementById('modal-aktifitas'), {
         backdrop: 'static',
         keyboard: false,
     });
     myModal.toggle();
+
     let cari= {
         title:vtitle,
         0:{val: tahun,fld: "k.tahun",cond: "where"},

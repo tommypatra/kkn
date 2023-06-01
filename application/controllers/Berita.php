@@ -88,6 +88,7 @@ class Berita extends CI_Controller
                 $berita = explode(' ', $detail);
 
                 $content = "";
+                $urlberita = base_url('web/detailberita/' . $dp['slug']);
                 if (count($berita) > 40) {
                     for ($i = 0; $i <= 40; $i++)
                         $content .= $berita[$i] . ' ';
@@ -102,7 +103,6 @@ class Berita extends CI_Controller
                     $thumbnail = "<img src='" . base_url($dp['thumbnail']) . "' class='card-img-top img-fluid' >";
                 }
 
-                $urlberita = base_url('web/detailberita/' . $dp['slug']);
                 $html = " <div class='col-xl-6 col-md-6 col-sm-12  rowdaftar' data-id='" . $dp['idberita'] . "''>
                             <div class='card'>
                                 <div class='card-body'>

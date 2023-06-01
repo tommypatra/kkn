@@ -420,7 +420,7 @@ class Dashboard extends CI_Controller
                                 <a href='#'>
                                     <h5 class='mb-0'>Admin</h5>
                                 </a>
-                                <div style='font-size:13px;'><i class='bi bi-envelope'></i> system@iainpare.ac.id</div>
+                                <div style='font-size:13px;'><i class='bi bi-envelope'></i> " . $this->config->item('email_admin') . "</div>
                                 <div class='row' style='font-size:12px'>
                                     <div class='col-12'>
                                     <a href='#'>Admin </a> - System Web 

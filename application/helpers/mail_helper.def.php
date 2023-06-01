@@ -28,7 +28,7 @@ if (!function_exists('kirimEmail')) {
             $CI->email->set_mailtype('html');
             $CI->email->set_newline("\r\n");
 
-            $CI->email->from($srcmail, 'PEMBERITAHUAN ' . strtoupper($CI->config->item('app_name')) . ' IAIN PAREPARE [NOREPLY]');
+            $CI->email->from($srcmail, 'PEMBERITAHUAN ' . strtoupper($CI->config->item('app_name')) . ' (' . $CI->config->item('kampus') . ') [NOREPLY]');
             $CI->email->to($list);
             $CI->email->subject($judul);
             $CI->email->message($pesan);
