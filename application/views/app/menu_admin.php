@@ -53,6 +53,10 @@
             <li class="submenu-item ">
                 <a href="<?= base_url('app/kelompok') ?>">Kelompok</a>
             </li>
+            <li class="submenu-item ">
+                <a href="<?= base_url('app/evaluasi') ?>">Kuesioner</a>
+            </li>
+
         </ul>
     </li>
 

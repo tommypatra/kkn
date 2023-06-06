@@ -4,7 +4,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title d-flex">
                 <i class="bx bx-check font-medium-5 pl-25 pr-75"></i>
-                DAFTAR LOKASI
+                DAFTAR KESIONER
                 <?= $datakkn['tema'] . " (" . $datakkn['jenis'] . ")" ?>
             </h4>
 
@@ -25,10 +25,10 @@
                     <thead>
                         <tr>
                             <th style="vertical-align: middle;" scope="col">No</th>
-                            <th style="vertical-align: middle;" scope="col">Provinsi</th>
-                            <th style="vertical-align: middle;" scope="col">Kabupaten</th>
-                            <th style="vertical-align: middle;" scope="col">Kecamatan</th>
-                            <th style="vertical-align: middle;" scope="col">Desa</th>
+                            <th style="vertical-align: middle;" scope="col">Judul</th>
+                            <th style="vertical-align: middle;" scope="col">Peruntukan</th>
+                            <th style="vertical-align: middle;" scope="col">Keterangan</th>
+                            <th style="vertical-align: middle;" scope="col"></th>
                         </tr>
                     </thead>
                     <tbody></tbody>

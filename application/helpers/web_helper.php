@@ -11,19 +11,7 @@ if (!function_exists('debug')) {
 	}
 }
 
-if (!function_exists('gantikarakter')) {
-	function gantikarakter($sumber, $karakter = "X")
-	{
-		$times = strlen(trim(substr($sumber, 4, 5)));
-		$star = '';
-		for ($i = 0; $i < $times; $i++) {
-			$star .= $karakter;
-		}
-		return $star;
-	}
-}
-
-
+// allow domain yang diberikan akses pada api webini
 if (!function_exists('allowheader')) {
 	function allowheader($content_type = "application/json")
 	{
@@ -51,6 +39,7 @@ if (!function_exists('allowheader')) {
 	}
 }
 
+// allow domain array untuk mendaftar pada website
 if (!function_exists('allowdomain')) {
 	function allowdomain($email)
 	{
@@ -69,6 +58,71 @@ if (!function_exists('allowdomain')) {
 			}
 		}
 		return $retval;
+	}
+}
+
+if (!function_exists('gantikarakter')) {
+	function gantikarakter($sumber, $karakter = "X")
+	{
+		$times = strlen(trim(substr($sumber, 4, 5)));
+		$star = '';
+		for ($i = 0; $i < $times; $i++) {
+			$star .= $karakter;
+		}
+		return $star;
+	}
+}
+
+function infoYoutube($url)
+{
+	$html = file_get_contents($url);
+	// Mendapatkan judul video
+	preg_match('/<title>(.*?)<\/title>/', $html, $titleMatches);
+	$title = isset($titleMatches[1]) ? $titleMatches[1] : '';
+	// Mendapatkan URL thumbnail
+	preg_match('/<meta property="og:image" content="(.*?)">/', $html, $thumbnailMatches);
+	$thumbnailUrl = isset($thumbnailMatches[1]) ? $thumbnailMatches[1] : '';
+
+	// Mengubah ukuran thumbnail menjadi medium
+	$thumbnailUrl = str_replace('/maxresdefault.jpg', '/mqdefault.jpg', $thumbnailUrl);
+
+	return [
+		'title' => strip_tags(htmlspecialchars_decode($title)),
+		'thumbnail' => $thumbnailUrl
+	];
+}
+
+if (!function_exists('getYouTubeThumbnail')) {
+	function getYouTubeThumbnail($url)
+	{
+		// Memeriksa apakah URL valid
+		$pattern = '/^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)$/';
+		preg_match($pattern, $url, $match);
+
+		if (isset($match[1])) {
+			$videoId = $match[1];
+			// $thumbnailUrl = 'https://img.youtube.com/vi/' . $videoId . '/maxresdefault.jpg';
+			$thumbnailUrl = 'https://img.youtube.com/vi/' . $videoId . '/mqdefault.jpg';
+			return $thumbnailUrl;
+		}
+		return null;
+	}
+}
+
+if (!function_exists('getYouTubeVideoTitle')) {
+	function getYouTubeVideoTitle($url)
+	{
+		// Mengambil konten halaman tautan YouTube
+		$html = file_get_contents($url);
+		// Mencocokkan judul video menggunakan ekspresi reguler
+		preg_match('/<title>(.*?)<\/title>/', $html, $matches);
+		if (isset($matches[1])) {
+			$title = $matches[1];
+			// Menghapus karakter tambahan pada judul
+			// $title = str_replace(' - YouTube', '', $title);
+			return $title;
+		}
+		return null; // Tidak dapat menemukan judul
 	}
 }
 

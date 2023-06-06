@@ -16,6 +16,7 @@ if(latitude && longitude){
 }
 
 $("#loadMoreLKH").hide();        
+$("#card-testimoni").hide();
 
 $(window).scroll(function() {
     if($(window).scrollTop() + $(window).height() >= $(document).height()) {
@@ -25,6 +26,7 @@ $(window).scroll(function() {
 });
 
 loadlkh(0);
+loadtestimoni();
 
 $("#loadMoreLKH").click(function(){
     let lastid = $(".rowlkh:last").data("id");
@@ -33,6 +35,25 @@ $("#loadMoreLKH").click(function(){
 
 useraktif();
 
+$("#reload_testimoni").click(function(){
+    loadtestimoni();
+});
+
+function loadtestimoni(){
+    let formVal={idkelompok: $("#idkelompok").val(),hapus:1}
+    let vElmt="#daftar_testimoni";
+    $(vElmt).empty();
+    $("#card_testimoni").hide();
+    appAjax("api/readtestimoni", formVal).done(function(vRet) {
+        if(vRet.status){
+            // jQuery.each(vRet.db, function(index, item) {
+            //     $(vElmt).append(item.html);
+            // });             
+            $(vElmt).append(vRet.html);
+            $("#card_testimoni").show();
+        }        
+    });
+}
 
 function loadlkh(lastid,limit=null){
     let formVal={
@@ -66,6 +87,19 @@ function loadlkh(lastid,limit=null){
 $(document).on('click','.gambardet',function(){
     var gbr=$(this).prop('src');
     window.open(gbr, 'newwindow', 'width=500, height=500');
+});
+
+
+$(document).on("click",".hapus-testimoni",function(e) {
+    e.preventDefault();
+    let formVal = {idTerpilih:$(this).data('id')};
+    if(confirm("apakah anda yakin?")){
+        appAjax("mahasiswa/testimoni/delete", formVal).done(function(vRet) {        
+            showNotification(vRet.status, vRet.pesan);
+            if(vRet.status)
+                loadtestimoni();
+        });    
+    }
 });
 
 $(document).on("click",".tambah-like",function(e) {
@@ -104,6 +138,31 @@ $(document).on("submit",".fkomentar",function(e) {
         resetform_komentar();
         refreshlkh();
     });
+});
+
+$(".btn-testimoni").click(function(e){
+    e.preventDefault();
+    var myModal = new bootstrap.Modal(document.getElementById('modal-testimoni'), {
+        backdrop: 'static',
+        keyboard: false,
+    });
+    myModal.toggle();
+    $("#link").val("");
+});
+
+$("#formtestimoni").submit(function(e) {
+    e.preventDefault();
+    let formVal = $(this).serialize();
+    if ($('#formtestimoni').validationEngine('validate')) {
+        appAjax("mahasiswa/testimoni/simpan", formVal).done(function(vRet) {
+            if (vRet.status) {
+                loadtestimoni();
+            }
+            showNotification(vRet.status,vRet.pesan);    
+        });
+        //alert("OK");
+    }
+    return false;
 });
 
 

@@ -4,7 +4,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title d-flex">
                 <i class="bx bx-check font-medium-5 pl-25 pr-75"></i>
-                DAFTAR PESERTA KPM
+                DAFTAR PESERTA <?= $this->config->item('app_singkatan') ?>
                 <?= $datakkn['tema'] . " (" . $datakkn['jenis'] . ")" ?>
             </h4>
 
@@ -18,7 +18,7 @@
 
         <div class="card-body">
             <div class="table-responsive">
-                <a href="<?= base_url('dashboard/kkn/' . $idkkn) ?>" class="btn btn-primary rounded-pill"><i class="bi bi-stack"></i> Dashboard KPM</a>
+                <a href="<?= base_url('dashboard/kkn/' . $idkkn) ?>" class="btn btn-primary rounded-pill"><i class="bi bi-stack"></i> Dashboard <?= $this->config->item('app_singkatan') ?></a>
                 <i class="bi bi-pin-map-fill"></i> <?= $datakkn['tempat'] ?>
 
                 <table class="table table-striped table-sm table-data">

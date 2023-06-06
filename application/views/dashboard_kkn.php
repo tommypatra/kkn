@@ -22,14 +22,15 @@
 
                             <div class="buttons mt-3">
                                 <a href="<?= base_url('web/peserta/' . $datakkn['idkkn']) ?>" class="btn btn-primary rounded-pill"><i class="bi bi-person-check"></i> Peserta</a>
-                                <a href="<?= base_url('web/dpl/' . $datakkn['idkkn']) ?>" class="btn btn-info rounded-pill"><i class="bi bi-person-workspace"></i> DPL KPM</a>
+                                <a href="<?= base_url('web/dpl/' . $datakkn['idkkn']) ?>" class="btn btn-info rounded-pill"><i class="bi bi-person-workspace"></i> DPL <?= $this->config->item('app_singkatan') ?></a>
                                 <a href="<?= base_url('web/lokasi/' . $datakkn['idkkn']) ?>" class="btn btn-secondary rounded-pill"><i class="bi bi-geo-alt"></i> Daftar Lokasi</a>
                                 <a href="<?= base_url('web/lokasiposko/' . $datakkn['idkkn']) ?>" class="btn btn-danger rounded-pill"><i class="bi bi-geo-fill"></i> Lokasi Posko</a>
-                                <a href="#" class="btn btn-success rounded-pill act-kelompok" data-kategori="teraktif"><i class="bi bi-arrow-up-right"></i> Kelompok Teraktif</a>
+                                <a href="javascript:;" class="btn btn-success rounded-pill act-kelompok" data-kategori="teraktif"><i class="bi bi-arrow-up-right"></i> Kelompok Teraktif</a>
                                 <!--
                                 <a href="#" class="btn btn-primary rounded-pill act-aktifitas" data-kategori="trending"><i class="bi bi-star"></i> Aktifitas Trending</a>
                                 -->
-                                <a href="#" class="btn btn-info rounded-pill act-aktifitas" data-kategori="best"><i class="bi bi-graph-up-arrow"></i> Aktifitas Terbaik</a>
+                                <a href="javascript:;" class="btn btn-info rounded-pill act-aktifitas" data-kategori="best"><i class="bi bi-graph-up-arrow"></i> Aktifitas Terbaik</a>
+                                <a href="<?= base_url('web/kuesioner/' . $datakkn['idkkn']) ?>" class="btn btn-primary rounded-pill"><i class="bi bi-ui-checks"></i> Kuesioner</a>
                             </div>
 
 

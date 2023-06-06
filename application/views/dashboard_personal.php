@@ -12,7 +12,18 @@
     $ispeserta = false;
     if ($pesertakkn['iduser'] == $this->session->userdata("iduser"))
         $ispeserta = true;
+
+    $phone = $pesertakkn['hp'];
+    $email = $pesertakkn['email'];
+    $kelemail = $kelompok['email'];
+    if (!$this->session->userdata('iduser')) {
+        $phone = preg_replace('/(\d{3})\d{4}(\d{3})/', '$1xxxx$2', $phone);
+        $kelemail = preg_replace('/(?<=.)[^@](?=[^@]*?@)|(?:(?<=@.)|(?!^)\G(?=[^@]*$)).(?=.*\.)/', 'x', $kelemail);
+        $email = preg_replace('/(?<=.)[^@](?=[^@]*?@)|(?:(?<=@.)|(?!^)\G(?=[^@]*$)).(?=.*\.)/', 'x', $email);
+    }
     ?>
+
+
 </div>
 <div class="page-content">
     <section class="row">
@@ -41,17 +52,20 @@
                             </div>
                             <div>Total Estimasi Biaya : <span class="badge bg-secondary">Rp. <?= (isset($rekapaktifitas['esttotal']) ? format_rupiah($rekapaktifitas['esttotal']) : 0) ?></span>
                             </div>
+                            <div>Jumlah Video Testimoni : <span class="badge bg-secondary" id="testimoni">0</span></div>
 
 
                             <div class="buttons mt-3">
                                 <!--
                                 <a href="#" class="btn btn-primary rounded-pill act-aktifitas" data-kategori="trending"><i class="bi bi-star"></i> Aktifitas Trending</a>
                                 -->
+                                <a href="<?= base_url('dashboard/kkn/' . $pesertakkn['idkkn']) ?>" class="btn btn-success rounded-pill"><i class="bi bi-house"></i> Dashboard <?= $this->config->item('app_singkatan') ?></a>
                                 <a href="#" class="btn btn-info rounded-pill act-aktifitas" data-kategori="best"><i class="bi bi-graph-up-arrow"></i> Aktifitas Terbaik</a>
                                 <?php if ($ispeserta) { ?>
-                                    <a href="#" class="btn btn-danger rounded-pill aktifitas-dpl" data-idkelompok="<?= $pesertakkn['idkelompok'] ?>"><i class="bi bi-exclamation-octagon"></i> Aktifitas DPL Anda <span style='font-weight:bold;' class="jum-notif-dpl">0</span></a>
+                                    <a href="#" class="btn btn-danger rounded-pill aktifitas-dpl" data-idkelompok="<?= $pesertakkn['idkelompok'] ?>"><i class="bi bi-exclamation-octagon"></i> Aktifitas DPL <span style='font-weight:bold;' class="jum-notif-dpl">0</span></a>
                                     <a href="#" class="btn btn-secondary rounded-pill profil-posko" data-idkelompok="<?= $pesertakkn['idkelompok'] ?>"><i class="bi bi-postcard"></i> Profil Posko</a>
                                 <?php } ?>
+                                <a href="<?= base_url('web/kuesioner/' . $pesertakkn['idkkn']) ?>" class="btn btn-primary rounded-pill"><i class="bi bi-ui-checks"></i> Kuesioner</a>
                             </div>
 
                         </div>
@@ -103,7 +117,7 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <h6>DPL : <?= $kelompok['nama'] ?></h6>
-                                        <span style="font-size:12px;"><?= $kelompok['email'] ?></span>
+                                        <span style="font-size:12px;"><?= $kelemail ?></span>
                                         <div class="text-muted mb-0" style="font-size:12px">
                                             <span class="badge bg-success"><i class="bi bi-clock"></i> <?= waktu_lalu($kelompok['lastlogin']) ?></span>
                                         </div>
@@ -116,7 +130,7 @@
                                             Jumlah Personel : <span class="badge bg-primary"><?= count($anggota) ?></span>
                                         </div>
                                         <hr>
-                                        <h6>Lokasi KPM : </h6>
+                                        <h6>Lokasi <?= $this->config->item('app_singkatan') ?> : </h6>
                                         <div style="font-size:13px">
                                             <div class="align-items-center">
                                                 <?= $kelompok['provinsi'] ?>
@@ -198,6 +212,17 @@
                         </div>
                     <?php } ?>
 
+                    <div class="card" id="card_testimoni" style="display: none;">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 id="reload_testimoni">Testimoni</h5>
+                                    <div id="daftar_testimoni"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="daftarlkh"></div>
                     <div class="btn btn-primary shadow-lg mb-4" id="loadMoreLKH">Tampilkan Kegiatan Lainnya</div>
 
@@ -221,7 +246,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div style='font-weight:bold'><?= $pesertakkn['nama'] ?></div>
-                                <div style="font-size:12px;"><?= $pesertakkn['email'] ?></div>
+                                <div style="font-size:12px;"><?= $email ?></div>
                                 <div class="align-items-center">
                                     Tempat/Tanggal Lahir :
                                     <?= ($pesertakkn['tmplahir'] != "") ? $pesertakkn['tmplahir'] . ", " : ""; ?>
@@ -231,10 +256,7 @@
                                     Jenis Kelamin : <span class="badge bg-primary"><?= $pesertakkn['kel'] ?></span>
                                 </div>
                                 <div class="align-items-center">
-                                    <?php
-                                    $phone = $pesertakkn['hp'];
-                                    $resphone = str_replace(substr($phone, 4, 6), gantikarakter($phone), $phone);                                    ?>
-                                    HP : <span class="badge bg-primary"><?= $resphone ?></span>
+                                    HP : <span class="badge bg-primary"><?= $phone ?></span>
                                 </div>
                                 <div class="align-items-center">
                                     Alamat : <?= $pesertakkn['alamat'] ?>

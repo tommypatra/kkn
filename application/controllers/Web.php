@@ -199,6 +199,39 @@ class Web extends CI_Controller
         $this->load->view('index', $this->d);
     }
 
+    public function kuesioner($idkkn = null)
+    {
+        $this->d['web']['title'] = "Kuesioner " . $this->d['web']['title'] . " " . $this->config->item("app_singkatan");
+        $this->d['web']['loadview'] = "daftar/kuesioner";
+        $this->d['web']['importPlugins'] = array(
+            loadPlugins("datatables"),
+            loadPlugins("sweetalert"),
+            loadPlugins("loading"),
+            loadPlugins("validation"),
+            loadPlugins("myapp"),
+        );
+
+        //cari kkn
+        $this->load->library("dataweb");
+        $vCari = array(
+            array("cond" => "where", "fld" => "k.id", "val" => $idkkn),
+        );
+        $datakkn = $this->dataweb->cariKkn($vCari);
+        if (!$datakkn['status'] || !$idkkn) {
+            redirect("web");
+        }
+        $this->d['datakkn'] = $datakkn['db'][0];
+
+
+        //$d['pembimbing'] = $this->datapembimbing();
+        $this->d['web']['importJs'] = array(
+            base_url('assets/web/daftar/kuesioner.js?' . date("ymdhis")),
+        );
+        $this->d['idkkn'] = $idkkn;
+
+        $this->load->view('index', $this->d);
+    }
+
     public function profil($idjenis_profil = null)
     {
         $this->load->library("dataweb");
@@ -330,7 +363,13 @@ class Web extends CI_Controller
             $tmp['nama'] = $dp['nama'];
             $tmp['nim'] = $dp['nim'];
             $tmp['kel'] = "<span class='badge bg-primary'>" . $dp['kel'] . "</span>";
-            $tmp['email'] = $dp['email'];
+
+            $email = $dp['email'];
+            if (!$this->session->userdata('iduser')) {
+                $email = preg_replace('/(?<=.)[^@](?=[^@]*?@)|(?:(?<=@.)|(?!^)\G(?=[^@]*$)).(?=.*\.)/', 'x', $email);
+            }
+
+            $tmp['email'] = $email;
             $tmp['prodi'] = $dp['prodi'];
             $tmp['desa'] = $dp['desa'];
             $tmp['namakelompok'] = $dp['namakelompok'];
@@ -342,7 +381,7 @@ class Web extends CI_Controller
                                             <h6><a href='" . base_url('dashboard/personal/' . $dp['idpenempatan']) . "'>" . $dp['nama'] . "</a></h6> 
                                             <div style='font-size:13px'>" . $dp['prodi'] . "</div>
                                             <div style='font-size:12px'>NIM." . $dp['nim'] . "</div>
-                                            <div style='font-size:12px'>Email : " . $dp['email'] . "</div>
+                                            <div style='font-size:12px'>Email : " . $email . "</div>
                                             <div class='text-muted mb-0' style='font-size:12px'>
                                                 <span class='badge bg-success'><i class='bi bi-clock'></i> " . waktu_lalu($dp['lastlogin']) . "</span>
                                             </div>
@@ -562,6 +601,44 @@ class Web extends CI_Controller
             $tmp['kecamatan'] = $dp['kecamatan'];
             $tmp['kabupaten'] = $dp['kabupaten'];
             $tmp['desa'] = $dp['desa'];
+            $data[] = $tmp;
+        }
+
+        $retVal['data'] = $data;
+        die(json_encode($retVal));
+    }
+
+    public function read_kuesioner()
+    {
+        allowheader();
+        $this->load->library('Datatables');
+
+        $idkkn = $this->input->post('idkkn');
+
+        $this->datatables->select("
+			'' as cek, '' as no, '' as aksi, 
+            e.id,e.idkkn,e.judul,e.link,e.tujuan,e.keterangan,
+            CONCAT(e.tujuan,' ',e.judul) as urut,
+		");
+        $this->datatables->where("e.idkkn", $idkkn);
+        $this->datatables->from("evaluasi as e");
+        $this->datatables->join("kkn as k", "e.idkkn=k.id", "left");
+
+        $retVal = json_decode($this->datatables->generate(), true);
+        //echo $this->db->last_query();
+        $data = array();
+        $no = 0;
+        foreach ($retVal['data'] as $index => $dp) {
+            $no++;
+            $tmp['no'] = $no;
+
+            $tmp['id'] = $dp['id'];
+            $tmp['idkkn'] = $dp['idkkn'];
+            $tmp['urut'] = $dp['urut'];
+            $tmp['judul'] = $dp['judul'];
+            $tmp['link'] = '<a href="' . $dp['link'] . '" target="_blank" class="btn btn-danger rounded-pill"><i class="bi bi-ui-checks"></i> Instrumen</a>';
+            $tmp['tujuan'] = $dp['tujuan'];
+            $tmp['keterangan'] = $dp['keterangan'];
             $data[] = $tmp;
         }
 

@@ -23,6 +23,13 @@ class Dashboard extends CI_Controller
         redirect("web");
     }
 
+    public function yt()
+    {
+        $img = getYouTubeThumbnail('https://www.youtube.com/watch?v=P6xLzxQLeq8');
+        if ($img)
+            echo '<img src="' . $img . '">';
+    }
+
     public function kkn($idkkn = null)
     {
         $this->load->library("Dataweb");
@@ -369,7 +376,7 @@ class Dashboard extends CI_Controller
         die(json_encode($retVal));
     }
 
-    public function listlampiran($lampiran = [], $itsme = false)
+    public function listlampiran($lampiran = [], $itsme = false, $ketkkn = 'tertutup')
     {
         $html = "";
         if (count($lampiran) > 0) {
@@ -381,7 +388,7 @@ class Dashboard extends CI_Controller
                 $url = base_url($dp['path']);
                 if (!$dp['is_image']) {
                     $html .= "<div class='col-12'><i class='bi bi-file-pdf'></i> <a style='font-size:12px;' target='_blank' href='" . $url . "'>" . $fileinfo['client_name'] . "</a>";
-                    if ($itsme) {
+                    if ($itsme && $ketkkn == 'terbuka') {
                         $html .= "<a href='#' class='btn icon icon-left btn-sm hapus-lampiran' data-idupload='" . $dp['idupload'] . "' title='hapus lampiran'><i class='bi bi-trash'></i></a>";
                     }
                     $html .= "</div>";
@@ -389,7 +396,7 @@ class Dashboard extends CI_Controller
                     $html .= "<div class='col-" . $divimg . "'>
                                <img src='" . $url . "' class='w-100 gambardet'>
                             ";
-                    if ($itsme) {
+                    if ($itsme && $ketkkn == 'terbuka') {
                         $html .= "<a href='#' class='btn icon icon-left btn-sm hapus-lampiran' data-idupload='" . $dp['idupload'] . "' title='hapus lampiran'><i class='bi bi-trash'></i></a>";
                     }
                     $html .= "</div>";
@@ -466,6 +473,8 @@ class Dashboard extends CI_Controller
                 dsa.desa, 
                 IF(DATE_ADD(NOW(), INTERVAL 8 HOUR)>=k.bagikelompok,'terbuka','tertutup') as ketpublishkelompok,
                 k.id as idkkn,k.tema,k.tahun,k.jenis,
+                IF('" . date('Y-m-d') . "' BETWEEN k.kknmulai AND k.kknselesai,'terbuka','tertutup') as ketkkn,
+
             ");
         //$this->db->where("a.idpenempatan", $idpenempatan);
         $vCari = (isset($vCari)) ? $vCari : [];
@@ -540,13 +549,22 @@ class Dashboard extends CI_Controller
                 $url = base_url("dashboard/personal/" . $dp['idpenempatan']);
                 if ($dp['iduser'] == $this->session->userdata('iduser') && $globalinput) {
                     $itsme = true;
-                    $btn_hapusaktifitas = "<a href='#' class='btn icon icon-left btn-sm hapus-aktifitas' data-idaktifitas='" . $dp['idaktifitas'] . "' title='hapus aktifitas'><i class='bi bi-trash'></i></a>";
-                    //$btn_uploadaktifitas = "<a href='#' class='btn icon icon-left btn-sm btn-upload-aktifitas' data-idaktifitas='" . $dp['idaktifitas'] . "' title='upload' ><i class='bi bi-upload'></i></a>";
-                    $btn_uploadaktifitas = "<input type='file' data-idpenempatan='" . $dp['idpenempatan'] . "' data-idaktifitas='" . $dp['idaktifitas'] . "' style='font-size:10px' class='upload-aktifitas' />";
+                    if ($dp['ketkkn'] == 'terbuka') {
+                        $btn_hapusaktifitas = "<a href='#' class='btn icon icon-left btn-sm hapus-aktifitas' data-idaktifitas='" . $dp['idaktifitas'] . "' title='hapus aktifitas'><i class='bi bi-trash'></i></a>";
+                        //$btn_uploadaktifitas = "<a href='#' class='btn icon icon-left btn-sm btn-upload-aktifitas' data-idaktifitas='" . $dp['idaktifitas'] . "' title='upload' ><i class='bi bi-upload'></i></a>";
+                        $btn_uploadaktifitas = "<input type='file' data-idpenempatan='" . $dp['idpenempatan'] . "' data-idaktifitas='" . $dp['idaktifitas'] . "' style='font-size:10px' class='upload-aktifitas' />";
+                    }
                 }
 
                 $html = "<div class='card rowlkh' data-id='" . $dp['idaktifitas'] . "'>";
                 $html .= "<div class='card-body'>";
+
+
+                $email = $dp['email'];
+                if (!$this->session->userdata('iduser')) {
+                    $email = preg_replace('/(?<=.)[^@](?=[^@]*?@)|(?:(?<=@.)|(?!^)\G(?=[^@]*$)).(?=.*\.)/', 'x', $email);
+                }
+
                 $html .= "  <div class='row'>
                                 <div class='col-3 col-lg-2 col-md-2'>
                                     <a href='" . $url . "'>
@@ -559,7 +577,7 @@ class Dashboard extends CI_Controller
                                     <a href='" . $url . "'>
                                         <h5 class='mb-0' >" . $dp['nama'] . "</h5>
                                     </a>
-                                    <div style='font-size:13px;'><i class='bi bi-envelope'></i> " . $dp['email'] . "</div>
+                                    <div style='font-size:13px;'><i class='bi bi-envelope'></i> " . $email . "</div>
                                     <div class='row' style='font-size:12px'>
                                         <div class='col-12'>
                                         <a href='" . base_url("dashboard/kkn/" . $dp['idkkn']) . "'>" . $dp['tema'] . " " . $dp['tahun'] . "</a> " . $ketkelompok . "
@@ -575,7 +593,7 @@ class Dashboard extends CI_Controller
                 $html .= "  <div class='buttons'>
                                 " . $btn_uploadaktifitas . "
                             </div>";
-                $html .= $this->listlampiran($listlampiran, $itsme);
+                $html .= $this->listlampiran($listlampiran, $itsme, $dp['ketkkn']);
 
                 $html .= "<div style='font-size:14px;margin-bottom:5px;'>
                             <i class='bi " . $thumbs . "' data-iduser='" . $dp['iduser'] . "' data-idaktifitas='" . $dp['idaktifitas'] . "'></i> " . count($listlike) . " Like &nbsp; 
@@ -887,6 +905,10 @@ class Dashboard extends CI_Controller
                 $btn_uploadaktifitas = "<input type='file' data-idpenempatan='" . $dp['idpenempatan'] . "' data-idaktifitas='" . $dp['idaktifitas'] . "' style='font-size:10px' class='upload-aktifitas' />";
             }
             */
+            $email = $dp['email'];
+            if (!$this->session->userdata('iduser')) {
+                $email = preg_replace('/(?<=.)[^@](?=[^@]*?@)|(?:(?<=@.)|(?!^)\G(?=[^@]*$)).(?=.*\.)/', 'x', $email);
+            }
 
             $html = "<div class='card rowlkh' data-id='" . $dp['idaktifitas'] . "'>";
             $html .= "<div class='card-body'>";
@@ -902,7 +924,7 @@ class Dashboard extends CI_Controller
                                     <a href='" . $url . "'>
                                         <h5 class='mb-0' >" . $dp['nama'] . "</h5>
                                     </a>
-                                    <div style='font-size:13px;'><i class='bi bi-envelope'></i> " . $dp['email'] . "</div>
+                                    <div style='font-size:13px;'><i class='bi bi-envelope'></i> " . $email . "</div>
                                     <div class='row' style='font-size:12px'>
                                         <div class='col-12'>
                                         <a href='" . base_url("dashboard/kkn/" . $dp['idkkn']) . "'>" . $dp['tema'] . " " . $dp['tahun'] . "</a> " . $ketkelompok . "

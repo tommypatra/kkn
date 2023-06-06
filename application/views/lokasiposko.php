@@ -11,7 +11,7 @@
                     <div class="card">
                         <div class="card-body">
                             <input type="hidden" id="idkkn" name="idkkn" value="<?= $idkkn ?>">
-                            <a href="<?= base_url("dashboard/kkn/" . $idkkn) ?>" class="btn btn-primary rounded-pill"><i class="bi bi-stack"></i> Dashboard KPM</a>
+                            <a href="<?= base_url("dashboard/kkn/" . $idkkn) ?>" class="btn btn-primary rounded-pill"><i class="bi bi-stack"></i> Dashboard <?= $this->config->item('app_singkatan') ?></a>
                             <hr>
                             <div id="map" style="width:100%;height:100vh;"></div>
                         </div>

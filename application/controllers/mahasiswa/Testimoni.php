@@ -23,39 +23,63 @@ class Testimoni extends CI_Controller
         $this->otentikasi = otentikasi($this->d);
     }
 
-    public function index()
+    public function delete()
     {
-        $this->load->library("select2");
-        $this->load->library("dataweb");
-        $this->d['web']['loadview'] = $this->d['web']['view'] . "/testimoni";
-        $this->d['web']['importPlugins'] = array(
-            loadPlugins("datetime"),
-            loadPlugins("datatables"),
-            loadPlugins("dropzone"),
-            loadPlugins("select2"),
-            loadPlugins("select2lib"),
-            loadPlugins("sweetalert"),
-            loadPlugins("loading"),
-            loadPlugins("validation"),
-            loadPlugins("myapp"),
-        );
+        $retVal = array("status" => false, "pesan" => [], "login" => true);
+        $id = $this->input->post('idTerpilih');
 
-        $this->d['web']['importJs'] = array(
-            base_url('assets/web/mahasiswa/testimoni.js?' . date("ymdhis")),
-        );
-
-
-        $vCari = array(
-            array("cond" => "where", "fld" => "pm.id IS NOT NULL", "val" => null),
-            array("cond" => "where", "fld" => "u.id", "val" => $this->session->userdata("iduser")),
-        );
-        $pesertaKKN = $this->dataweb->pesertakkn($vCari);
-        $listkkn = array();
-        if ($pesertaKKN['status']) {
-            $listkkn = $pesertaKKN['db'];
+        $retVal['pesan'] = ["akses ditolak"];
+        $run = akses_akun("delete", $this->otentikasi, $this->d['tbName'], $id);
+        if ($run->status) {
+            $kond = array(
+                array("where", "id", $id),
+            );
+            $runquery = $this->Model_data->delete($kond, $this->d['tbName'], null, true);
+            $retVal['pesan'] = $runquery['pesan'];
+            $retVal['status'] = true;
         }
-        $this->d['dataSql'] = $listkkn;
 
-        $this->load->view('app/index', $this->d);
+        die(json_encode($retVal));
+    }
+    public function validYoutubeUrl($url)
+    {
+        // Menggunakan regex untuk memvalidasi URL YouTube
+        if (preg_match('/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/i', $url)) {
+            return true;
+        }
+        return false;
+    }
+
+    public function simpan()
+    {
+        $retVal = array("status" => false, "pesan" => "", "login" => true);
+        allowheader();
+
+        $this->form_validation->set_rules('idkelompok', 'Kelompok', 'trim|required');
+        $this->form_validation->set_rules('link', 'Link Youtube', 'trim|required|valid_url');
+
+        if ($this->form_validation->run()) {
+            if (!$this->validYoutubeUrl($this->input->post('link'))) {
+                $retVal['pesan'] = ['Wajib menggunakan youtube'];
+                die(json_encode($retVal));
+            }
+            $dataSave = $this->input->post();
+            $infoYoutube = infoYoutube($this->input->post('link'));
+
+            if (!$dataSave['judul']) {
+                $dataSave['judul'] = $infoYoutube['title'];
+            }
+            $dataSave['thumbnail'] = $infoYoutube['thumbnail'];
+
+            if (akses_akun("insert", $this->otentikasi)->status) {
+                $retVal = $this->Model_data->save($dataSave, $this->d['tbName'], null, true);
+            } else {
+                $retVal['pesan'] = "Maaf, akses ditolak";
+            }
+        } else {
+            $retVal['pesan'] = $this->form_validation->error_array();
+            $retVal['status'] = false;
+        }
+        die(json_encode($retVal));
     }
 }

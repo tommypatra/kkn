@@ -267,6 +267,12 @@ class Api extends CI_Controller
                 $url2 = base_url("dashboard/detail_aktifitas/" . $dp['idaktifitas']);
                 $ketkelompok = ($dp['ketpublishkelompok'] == "terbuka") ? " - " . $dp['jabatan'] . " <br> <a href='" . base_url("dashboard/kelompok/" . $dp['idkelompok']) . "'>Kelompok " . $dp['namakelompok'] . " (" . $dp['desa'] . ")</a>" : "";
 
+                $email = $dp['email'];
+                if (!$this->session->userdata('iduser')) {
+                    $email = preg_replace('/(?<=.)[^@](?=[^@]*?@)|(?:(?<=@.)|(?!^)\G(?=[^@]*$)).(?=.*\.)/', 'x', $email);
+                }
+
+
                 $html = "  <div class='row'>
                                 <div class='col-3 col-lg-2 col-md-2'>
                                     <a href='" . $url1 . "'>
@@ -279,7 +285,7 @@ class Api extends CI_Controller
                                     <a href='" . $url1 . "'>
                                         <h5 class='mb-0' >" . $dp['nama'] . "</h5>
                                     </a>
-                                    <div style='font-size:13px;'><i class='bi bi-envelope'></i> " . $dp['email'] . "</div>
+                                    <div style='font-size:13px;'><i class='bi bi-envelope'></i> " . $email . "</div>
                                     <div class='row' style='font-size:12px'>
                                         <div class='col-12'>
                                             <a href='" . base_url("dashboard/kkn/" . $dp['idkkn']) . "'>" . $dp['tema'] . " " . $dp['tahun'] . "</a> " . $ketkelompok . "
@@ -401,6 +407,117 @@ class Api extends CI_Controller
         $this->load->library("Dataweb");
         $vCari = array();
         $retVal = $this->dataweb->cariGrup($vCari);
+        die(json_encode($retVal));
+    }
+
+    public function daftartahun()
+    {
+        $this->load->library("Dataweb");
+        $vCari = array();
+        $retVal = $this->dataweb->daftartahun($vCari);
+        die(json_encode($retVal));
+    }
+
+    public function daftarkkn()
+    {
+        $this->load->library("Dataweb");
+        $vCari = $this->input->post('vCari', true);
+        $retVal = $this->dataweb->cariKkn($vCari);
+        die(json_encode($retVal));
+    }
+
+
+    public function readtestimoni()
+    {
+        $retVal = array("status" => false, "pesan" => [], "login" => true);
+        $id = $this->input->post('idkelompok');
+        if ($id) {
+            $this->db->from("testimoni as t");
+            $this->db->select("
+                t.*,
+                k.namakelompok,
+                d.desa,
+                c.kecamatan,
+                b.kabupaten,
+                r.provinsi,
+                l.idkkn,
+                n.tahun,n.semester,n.tema,n.angkatan,n.jenis,n.tempat,
+                IF('" . date('Y-m-d') . "' BETWEEN n.kknmulai AND n.kknselesai,'terbuka','tertutup') as ketkkn,
+
+            ");
+            $this->db->join("kelompok as k", "t.idkelompok=k.id", "left");
+            $this->db->join("lokasi as l", "k.idlokasi=l.id", "left");
+            $this->db->join("kkn as n", "l.idkkn=n.id", "left");
+            $this->db->join("wilayah_desa as d", "l.iddesa=d.id", "left");
+            $this->db->join("wilayah_kec as c", "d.idkecamatan=c.id", "left");
+            $this->db->join("wilayah_kab as b", "c.idkabupaten=b.id", "left");
+            $this->db->join("wilayah_prov as r", "b.idprovinsi=r.id", "left");
+            $this->db->order_by("t.id DESC");
+            $this->db->where("t.idkelompok", $id);
+            $sql = $this->db->get();
+
+            if ($sql->num_rows() > 0) {
+                $retVal['status'] = true;
+                $db = [];
+                $html = "";
+                foreach ($sql->result_array() as $i => $dp) {
+                    $db[$i]['id'] = $dp['id'];
+                    $db[$i]['idkkn'] = $dp['idkkn'];
+                    $db[$i]['idkelompok'] = $dp['idkelompok'];
+                    $db[$i]['link'] = $dp['link'];
+                    $db[$i]['namakelompok'] = $dp['namakelompok'];
+                    $db[$i]['desa'] = $dp['desa'];
+                    $db[$i]['kecamatan'] = $dp['kecamatan'];
+                    $db[$i]['kabupaten'] = $dp['kabupaten'];
+                    $db[$i]['provinsi'] = $dp['provinsi'];
+                    $db[$i]['tahun'] = $dp['tahun'];
+                    $db[$i]['semester'] = $dp['semester'];
+                    $db[$i]['tema'] = $dp['tema'];
+                    $db[$i]['angkatan'] = $dp['angkatan'];
+                    $db[$i]['jenis'] = $dp['jenis'];
+                    $db[$i]['tempat'] = $dp['tempat'];
+                    $db[$i]['thumbnail'] = $dp['thumbnail'];
+                    $db[$i]['judul'] = $dp['judul'];
+                    $db[$i]['owned'] = false;
+
+                    $btnHapus = '';
+                    if ($dp['owned'] == $this->session->userdata('iduser')) {
+                        $db[$i]['owned'] = true;
+                        if ($this->input->post('hapus') && $dp['ketkkn'] == 'terbuka')
+                            $btnHapus = '<a href="javascript:;" data-id="' . $dp['id'] . '" class="hapus-testimoni">
+                                            <div class="btn btn-danger rounded-pill"><i class="bi bi-trash"></i></div>
+                                        </a>';
+                    }
+
+                    $tmpHtml =  '<div class="row">                                    
+                                    <div class="col-12" style="font-weight:bold;font-size:15px;">
+                                        <a href="' . $dp['link'] . '" target="_blank">
+                                            ' . $dp['judul'] . '
+                                        </a>
+                                    </div>
+                                    <div class="col-12 mb-2"">
+                                        <a href="' . $dp['link'] . '" target="_blank">
+                                            <img src="' . $dp['thumbnail'] . '" width="100%">
+                                        </a>
+                                    </div>
+                                    <div class="col-6" style="text-align:left">
+                                        <a href="' . $dp['link'] . '" target="_blank">
+                                            <div class="btn btn-danger rounded-pill" ><i class="bi bi-youtube"></i> selengkapnya di youtube</div>
+                                        </a>
+                                    </div>
+                                    <div class="col-6" style="text-align:right">
+                                        ' . $btnHapus . '
+                                    </div>
+                                    <hr class="mt-2 mb-2">
+                                </div>';
+                    $html .= $tmpHtml;
+                    $db[$i]['html'] = $tmpHtml;
+                }
+                $retVal['db'] = $db;
+                $retVal['html'] = $html;
+            }
+        }
+
         die(json_encode($retVal));
     }
 }

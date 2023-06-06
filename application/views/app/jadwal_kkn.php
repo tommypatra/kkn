@@ -124,7 +124,7 @@
 
                             <div class="form-group">
                                 <label>Slug</label>
-                                <small class="text-muted"><i>link yang akan diakses oleh peserta kpm agar lebih mudah dikenali</i></small>
+                                <small class="text-muted"><i>link yang akan diakses oleh peserta <?= $this->config->item('app_singkatan') ?> agar lebih mudah dikenali</i></small>
                                 <input type="text" class="form-control validate[required]" id="slug" name="slug">
                             </div>
                         </div>
@@ -134,7 +134,7 @@
                                 <select class="form-select validate[required] vselect2" id="semester" name="semester"></select>
                             </div>
                             <div class="form-group">
-                                <label>Jenis KPM</label>
+                                <label>Jenis <?= $this->config->item('app_singkatan') ?></label>
                                 <select class="form-select validate[required] vselect2" id="jenis" name="jenis"></select>
                             </div>
                         </div>
@@ -143,7 +143,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="form-group">
-                                <label>Tema KPM</label>
+                                <label>Tema <?= $this->config->item('app_singkatan') ?></label>
                                 <input type="text" class="form-control validate[required]" id="tema" name="tema">
                             </div>
                         </div>
@@ -197,7 +197,7 @@
 
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label>Pelaksanaan KPM</label>
+                                <label>Pelaksanaan <?= $this->config->item('app_singkatan') ?></label>
                                 <input type="text" name="kknmulai" id="kknmulai" class="form-control validate[required] datepicker" placeholder="Mulai">
                                 <label>sampai dengan</label>
                                 <input type="text" name="kknselesai" id="kknselesai" class="form-control validate[required] datepicker" placeholder="Selesai">

@@ -2,6 +2,13 @@
     <h3><?= $this->config->item('app_singkatan') ?> - Dashboard Kelompok <?= $kelompok['namakelompok'] ?></h3>
     <input type="hidden" id="idkelompok" name="idkelompok" value="<?= $kelompok['idkelompok'] ?>">
     <input type="hidden" id="idkkn" name="idkkn" value="<?= $kelompok['idkkn'] ?>">
+    <?php
+    $kelemail = $kelompok['email'];
+    if (!$this->session->userdata('iduser')) {
+        $kelemail = preg_replace('/(?<=.)[^@](?=[^@]*?@)|(?:(?<=@.)|(?!^)\G(?=[^@]*$)).(?=.*\.)/', 'x', $kelemail);
+    }
+    ?>
+
 </div>
 <div class="page-content">
     <section class="row">
@@ -10,7 +17,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h5>Kegiatan <?= $pesertakkn['tema'] ?> Tahun <?= $pesertakkn['tahun'] ?> (<?= $pesertakkn['jenis'] ?>)</h5>
+                            <h5><a href="<?= base_url('dashboard/kkn/' . $pesertakkn['idkkn']) ?>">Kegiatan <?= $pesertakkn['tema'] ?> Tahun <?= $pesertakkn['tahun'] ?> (<?= $pesertakkn['jenis'] ?>)</a></h5>
                         </div>
                         <div class="card-body">
                             <div>Tempat : <?= $pesertakkn['tempat'] ?></div>
@@ -19,12 +26,15 @@
                             </div>
                             <div>Total Estimasi Biaya : <span class="badge bg-secondary">Rp. <?= (isset($rekapaktifitas['esttotal']) ? format_rupiah($rekapaktifitas['esttotal']) : 0) ?></span>
                             </div>
-
                             <div class="buttons mt-3">
                                 <!--
                                 <a href="#" class="btn btn-primary rounded-pill act-aktifitas" data-kategori="trending"><i class="bi bi-star"></i> Aktifitas Trending</a>
                                 -->
                                 <a href="#" class="btn btn-info rounded-pill act-aktifitas" data-kategori="best"><i class="bi bi-graph-up-arrow"></i> Aktifitas Terbaik</a>
+                                <?php if ($pesertakkn['ketkkn'] == 'terbuka') { ?>
+                                    <a href="#" class="btn btn-success rounded-pill btn-testimoni"><i class="bi bi-chat-right-quote-fill"></i> Tambah Testimoni</a>
+                                <?php } ?>
+                                <a href="<?= base_url('web/kuesioner/' . $pesertakkn['idkkn']) ?>" class="btn btn-primary rounded-pill"><i class="bi bi-ui-checks"></i> Kuesioner</a>
                             </div>
 
                         </div>
@@ -54,7 +64,7 @@
                                             Jumlah Personel : <span class="badge bg-primary"><?= count($anggota) ?></span>
                                         </div>
                                         <hr>
-                                        <h6>Lokasi KPM : </h6>
+                                        <h6>Lokasi <?= $this->config->item('app_singkatan') ?> : </h6>
                                         <div style="font-size:13px">
                                             <div class="align-items-center">
                                                 <?= $kelompok['provinsi'] ?>
@@ -180,6 +190,17 @@
                         </div>
                     </div>
 
+                    <div class="card" id="card_testimoni" style="display: none;">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 id="reload_testimoni">Testimoni</h5>
+                                    <div id="daftar_testimoni"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="daftarlkh"></div>
                     <div class="btn btn-primary shadow-lg mb-4" id="loadMoreLKH">Tampilkan Kegiatan Lainnya</div>
                 </div>
@@ -197,7 +218,7 @@
                         <div class="col-12">
                             <img src="<?= base_url($kelompok['profilpic']) ?>" height="130px">
                             <div style='font-weight:bold'><?= $kelompok['nama'] ?></div>
-                            <div style="font-size:12px;"><?= $kelompok['email'] ?></div>
+                            <div style="font-size:12px;"><?= $kelemail ?></div>
                         </div>
                     </div>
                 </div>
@@ -291,6 +312,50 @@
                     Tutup
                 </button>
             </div>
+        </div>
+    </div>
+</div>
+<!-- full size modal-->
+
+<!-- Modal web -->
+<div class="modal fade text-left w-100" id="modal-testimoni" tabindex="-1" role="dialog" aria-labelledby="myModalForm" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tambah Testimoni</h4>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <form id="formtestimoni">
+                <input type="hidden" id="idkelompok" name="idkelompok" value="<?= $kelompok['idkelompok'] ?>">
+                <div class=" modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="judul">Judul</label>
+                                <input type="text" class="form-control" id="judul" name="judul">
+                                jika dikosongkan akan menggunakan judul pada link youtube
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="link">Link (Wajib youtube)</label>
+                                <input type="text" class="form-control validate[required,custom[url]]" id="link" name="link">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+                        Tutup
+                    </button>
+                    <button type="submit" class="btn btn-primary ml-1">
+                        Simpan
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

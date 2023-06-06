@@ -35,6 +35,24 @@ function showPosition(position){
 if(itsme)
     getLocation();
 
+
+function loadtestimoni(vidkelompok){
+    let formVal={idkelompok: vidkelompok,hapus:0}
+    let vElmt="#daftar_testimoni";
+    $(vElmt).empty();
+    $("#card_testimoni").hide();
+    $("#testimoni").html("0");
+    appAjax("api/readtestimoni", formVal).done(function(vRet) {
+        if(vRet.status){
+            // jQuery.each(vRet.db, function(index, item) {
+            //     $(vElmt).append(item.html);
+            // });             
+            $(vElmt).append(vRet.html);
+            $("#testimoni").html(vRet.db.length);
+            $("#card_testimoni").show();
+        }        
+    });
+}
 $("#loadMoreLKH").click(function(){
     let lastid = $(".rowlkh:last").data("id");
     loadlkh(lastid);
@@ -449,6 +467,7 @@ function loadprofil(idkelompok,statusprofil=true) {
     appAjax("api/dataposko", cari).done(function(vRet) {  
         if(vRet.status){
             let db=vRet.db[0];
+            loadtestimoni(db.idkelompok);
             if(statusprofil)
                 formprofil(db);
             else

@@ -156,7 +156,7 @@ class Penempatan extends CI_Controller
         if (in_array(4, $grupakun)) {
             $this->load->library("dataweb");
             $vCari = array(
-                array("cond" => "where", "fld" => "k.tahun", "val" => date("Y")),
+                //array("cond" => "where", "fld" => "k.tahun", "val" => date("Y")),
                 array("cond" => "where", "fld" => "pm.id IS NOT NULL", "val" => null),
                 array("cond" => "where", "fld" => "u.id", "val" => $this->session->userdata('iduser')),
             );

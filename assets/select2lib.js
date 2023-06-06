@@ -21,6 +21,24 @@
     });
   }
   
+  function sel2_tujuan(vselector,vDropDownParent=""){
+    $(vselector).select2({
+      data:[{id:"",text:""},
+            {id:"DPL",text:"DPL"}, 
+            {id:"PESERTA",text:'PESERTA'},
+            {id:"UMUM",text:'UMUM'},
+            {id:"EKSTERNAL",text:'EKSTERNAL'},
+            {id:"PEMDA",text:'PEMDA'},
+            {id:"MASYARAKAT",text:'MASYARAKAT'},
+            {id:"PANITIA",text:'PANITIA'},
+          ],
+      dropdownAutoWidth: true,
+      dropdownParent: vDropDownParent,
+      placeholder: '- pilih -',
+      allowClear: true,
+    });
+  }
+  
   function sel2_statuspeg(vselector,vDropDownParent=""){
     $(vselector).select2({
       data:[{id:"",text:""},

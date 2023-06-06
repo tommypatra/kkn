@@ -108,10 +108,10 @@
                     <div class="submenu-group-wrapper">
                         <ul class="submenu-group">
                             <li class="submenu-item  ">
-                                <a href="https://iainpare.ac.id" class='submenu-link'>Dokumentasi</a>
+                                <a href="<?= $this->config->item('link_dokumentasi') ?>" class='submenu-link'>Dokumentasi</a>
                             </li>
                             <li class="submenu-item  ">
-                                <a href="https://www.youtube.com/channel/UC99XS3KdtJ7fOBqTn4CKW1g" class='submenu-link'>Video Youtube</a>
+                                <a href="<?= $this->config->item('link_youtube') ?>" class='submenu-link'>Video Youtube</a>
                             </li>
                     </div>
                 </div>
