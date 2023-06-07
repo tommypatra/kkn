@@ -315,11 +315,14 @@ class Web extends CI_Controller
         $this->load->library('Datatables');
 
         $idkkn = $this->input->post('idkkn');
+        $isadmin = $this->input->post('isadmin');
 
         $this->datatables->from("peserta as ps");
         $this->datatables->select("
 			'' as no, '' as aksi, 
-            u.id as iduser, TRIM(CONCAT(u.glrdepan,' ',u.nama,' ',u.glrbelakang)) as nama, 
+            u.id as iduser, 
+            u.nama, 
+            TRIM(CONCAT(peg.glrdepan,' ',peg.nama,' ',peg.glrbelakang)) as dpl,
             u.nik, u.kel, u.path as profilpic, u.hp, u.email, u.aktivasi, u.tmplahir, u.tgllahir, u.alamat,
             m.id as idmahasiswa, m.nim, m.path as kartumhspic, prodi.id as idprodi, fak.id as idfakultas, prodi.prodi, fak.fakultas,
             k.tahun,k.tema,k.angkatan,k.jenis,k.tempat, ps.id as idpeserta,
@@ -330,6 +333,8 @@ class Web extends CI_Controller
             dsa.id as iddesa,dsa.desa,l.lastlogin,
             IF(DATE_ADD(NOW(), INTERVAL 8 HOUR)>=k.bagikelompok,'terbuka','tertutup') as ketpublishkelompok,
 		");
+
+
         $this->datatables->join("penempatan as pm", "pm.idpeserta=ps.id", "left");
         $this->datatables->join("kelompok as kl", "kl.id=pm.idkelompok", "left");
         $this->datatables->join("lokasi as l", "l.id=kl.idlokasi", "left");
@@ -343,6 +348,13 @@ class Web extends CI_Controller
         $this->datatables->join("mst_jabatan as jb", "pm.idjabatan=jb.id", "left");
         $this->datatables->join("pendaftar as p", "p.id=ps.idpendaftar", "left");
         $this->datatables->join("kkn as k", "k.id=p.idkkn", "left");
+
+        //pembimbing
+        $this->datatables->join("pembimbing_kkn as pk", "pk.id=kl.idpembimbing_kkn", "left");
+        $this->datatables->join("pembimbing as pb", "pk.idpembimbing=pb.id", "left");
+        $this->datatables->join("hakakses as hk", "hk.id=pb.idhakakses", "left");
+        $this->datatables->join("user as peg", "peg.id=hk.iduser", "left");
+
         $this->datatables->join("mahasiswa as m", "m.id=p.idmahasiswa", "left");
         $this->datatables->join("user as u", "u.id=m.iduser", "left");
         $this->datatables->join("mst_prodi as prodi", "m.idprodi=prodi.id", "left");
@@ -350,9 +362,10 @@ class Web extends CI_Controller
         $this->datatables->join("(SELECT MAX(lastlogin) as lastlogin,iduser FROM login_history GROUP BY iduser) as l", "l.iduser=u.id", "left");
 
         $this->datatables->where("k.id", $idkkn);
+        // $this->datatables->group_by("ps.id");
 
         $retVal = json_decode($this->datatables->generate(), true);
-        //echo $this->db->last_query();
+        // echo $this->db->last_query();
         $data = array();
         $no = 0;
         foreach ($retVal['data'] as $index => $dp) {
@@ -365,14 +378,18 @@ class Web extends CI_Controller
             $tmp['kel'] = "<span class='badge bg-primary'>" . $dp['kel'] . "</span>";
 
             $email = $dp['email'];
+            $phone = $dp['hp'];
+
             if (!$this->session->userdata('iduser')) {
                 $email = preg_replace('/(?<=.)[^@](?=[^@]*?@)|(?:(?<=@.)|(?!^)\G(?=[^@]*$)).(?=.*\.)/', 'x', $email);
+                $phone = preg_replace('/(\d{3})\d{4}(\d{3})/', '$1xxxx$2', $phone);
             }
 
             $tmp['email'] = $email;
             $tmp['prodi'] = $dp['prodi'];
             $tmp['desa'] = $dp['desa'];
-            $tmp['namakelompok'] = $dp['namakelompok'];
+            $tmp['dpl'] = $dp['dpl'];
+            $tmp['namakelompok'] = str_pad($dp['namakelompok'], 3, '0', STR_PAD_LEFT);
             $tmp['lastlogin'] = $dp['lastlogin'];
 
             $tmp['detmahasiswa'] = "<div class='row'>
@@ -388,6 +405,15 @@ class Web extends CI_Controller
                                         </div>
                                     </div>";
 
+            if ($isadmin) {
+                $tmp['provinsi'] = $dp['provinsi'];
+                $tmp['kabupaten'] = $dp['kabupaten'];
+                $tmp['kecamatan'] = $dp['kecamatan'];
+                $tmp['desa'] = $dp['desa'];
+            }
+            $tmp['jabatan'] = $dp['jabatan'];
+            $tmp['hp'] = $phone;
+            $tmp['email'] = $email;
             $tmp['detkelompok'] = "Belum";
             if ($dp['ketpublishkelompok'] == 'terbuka' && $dp['namakelompok'] != "") {
                 $tmp['detkelompok'] = " <h5>" . $dp['jabatan'] . "</h5>
@@ -532,7 +558,14 @@ class Web extends CI_Controller
             $tmp['nama'] = $dp['nama'];
             $tmp['nip'] = $dp['nip'];
             $tmp['kel'] = "<span class='badge bg-primary'>" . $dp['kel'] . "</span>";
-            $tmp['email'] = $dp['email'];
+
+            $email = $dp['email'];
+            if (!$this->session->userdata('iduser')) {
+                $email = preg_replace('/(?<=.)[^@](?=[^@]*?@)|(?:(?<=@.)|(?!^)\G(?=[^@]*$)).(?=.*\.)/', 'x', $email);
+            }
+
+
+            $tmp['email'] = $email;
             $tmp['desa'] = $dp['desa'];
             $tmp['namakelompok'] = $dp['namakelompok'];
             $tmp['lastlogin'] = $dp['lastlogin'];
@@ -542,7 +575,7 @@ class Web extends CI_Controller
                                         <div class='col-9'>
                                             <h6>" . $dp['nama'] . "</h6> 
                                             <div style='font-size:12px'>NIP/NIDN : " . $dp['nip'] . "</div>
-                                            <div style='font-size:12px'>Email : " . $dp['email'] . "</div>
+                                            <div style='font-size:12px'>Email : " . $email . "</div>
                                             <div class='text-muted mb-0' style='font-size:12px'>
                                                 <span class='badge bg-success'><i class='bi bi-clock'></i> " . waktu_lalu($dp['lastlogin']) . "</span>
                                             </div>

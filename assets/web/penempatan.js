@@ -75,6 +75,17 @@ $(document).on("click", ".bagiOtomatis", function (e) {
     }
 });
 
+$(document).on("click", ".daftarPeserta", function (e) {
+    let idjadwal = $("#idjadwalkkn").val();
+    if(idjadwal==""){
+        showNotification(false, ["Pilih KKN Terlebih dahulu"]);
+    }else{
+        // window.location.href = vBase_url+"app/penempatan/daftar/"+idjadwal;
+        window.open(vBase_url+"app/penempatan/daftar/"+idjadwal, '_blank', 'toolbar=yes, location=yes, status=yes, menubar=yes, scrollbars=yes');
+    }
+});
+
+
 //ganti jabatan
 $(document).on("click", ".gantiKelompok", function (e) {
 

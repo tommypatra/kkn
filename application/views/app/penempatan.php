@@ -55,8 +55,9 @@
             </h4>
             <div class="list-inline d-flex">
                 <div class="buttons">
-                    <a href="#" class="btn icon btn-success gantiKelompok" href="#" title="pindah kelompok"><i class="bi bi-box-arrow-right"></i></a>
-                    <a href="#" class="btn icon btn-info bagiOtomatis" href="#" title="pembagian kelompok otomatis"><i class="bi bi-bezier"></i></a>
+                    <a href="#" class="btn icon btn-success gantiKelompok" title="pindah kelompok"><i class="bi bi-box-arrow-right"></i></a>
+                    <a href="#" class="btn icon btn-info bagiOtomatis" title="pembagian kelompok otomatis"><i class="bi bi-bezier"></i></a>
+                    <a href="#" class="btn icon btn-primary daftarPeserta" title="Daftar peserta"><i class="bi bi-journals"></i></a>
                 </div>
             </div>
 

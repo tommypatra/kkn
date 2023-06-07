@@ -49,6 +49,28 @@ class Penempatan extends CI_Controller
         $this->load->view('app/index', $this->d);
     }
 
+    public function daftar($idkkn = null)
+    {
+        $this->load->library('Dataweb');
+        $this->d['web']['title'] = $this->d['web']['title'] . " " . $this->config->item("app_singkatan");
+
+        $this->d['web']['importPlugins'] = array(
+            loadPlugins("datatables"),
+            loadPlugins("myapp"),
+        );
+
+        $vCari = array(
+            array("cond" => "where", "fld" => "k.id", "val" => $idkkn),
+        );
+        $datakkn = $this->dataweb->cariKkn($vCari);
+        if (!$datakkn['status'] || !$idkkn) {
+            redirect("web");
+        }
+        $this->d['datakkn'] = $datakkn['db'][0];
+        $this->load->view('app/daftar', $this->d);
+    }
+
+
     public function bagikelompok($idkkn = null)
     {
     }
