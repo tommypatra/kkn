@@ -217,9 +217,10 @@ class Akun extends CI_Controller
             $this->form_validation->set_rules('pass1', 'Password', 'required|min_length[8]');
             $this->form_validation->set_rules('pass2', 'Ulangi password', 'required|matches[pass1]');
         }
+
         // $idgrup = $this->input->post('idgrup');
         // if (count($idgrup) < 1) {
-        //     $retVal['pesan'] = "grup tidak boleh kosong";
+        //     $retVal['pesan'] = ["grup tidak boleh kosong"];
         //     die(json_encode($retVal));
         // }
 
@@ -227,16 +228,18 @@ class Akun extends CI_Controller
             $dataSave = $this->input->post();
             $id = $dataSave['id'];
             unset($dataSave['id']);
-            unset($dataSave['idgrup']);
-            if ($this->input->post('gantipass')) {
-                $dataSave['fldpass'] = $dataSave['pass1'];
+            // unset($dataSave['idgrup']);
+            if ($this->input->post('pass1')) {
+                // $dataSave['fldpass'] = $dataSave['pass1'];
+                $dataSave['fldpass'] = password_hash($dataSave['pass1'], PASSWORD_DEFAULT);
             }
             unset($dataSave['pass1']);
             unset($dataSave['pass2']);
             //debug($dataSave);
+            unset($dataSave['gantipass']);
 
             if ($id == "" && akses_akun("insert", $this->otentikasi)->status) {
-                //$retVal = $this->Model_data->save($dataSave, $this->d['tbName'], null, true);
+                $retVal = $this->Model_data->save($dataSave, $this->d['tbName'], null, true);
             } elseif ($id <> "" && akses_akun("update", $this->otentikasi, $this->d['tbName'], $id)->status) {
                 $kond = array(
                     array("where", $this->d['primaryKey'], $id),

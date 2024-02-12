@@ -61,6 +61,61 @@ if (!function_exists('allowdomain')) {
 	}
 }
 
+
+if (!function_exists('isMobileDev')) {
+	function isMobileDev()
+	{
+		return preg_match(
+			"/(android|avantgo|blackberry|bolt|boost|cricket|docomo
+|fone|pad|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i",
+			$_SERVER["HTTP_USER_AGENT"]
+		);
+	}
+}
+
+function membuatLink($text)
+{
+	$pattern = '/\b(https?:\/\/[^\s]+)\b/';
+	$replacement = '<a href="$1" target="_blank">$1</a>';
+	$text = preg_replace($pattern, $replacement, $text);
+
+	return $text;
+}
+
+
+if (!function_exists('kirimwa')) {
+	function kirimwa($hp = "", $akses = false, $wa = true, $icon = true)
+	{
+
+		$retval = "";
+		if ($hp <> "") {
+			$tmphp = explode("/", $hp);
+			foreach ($tmphp as $hp) {
+				$hp = trim($hp);
+				$hp = str_replace(array("-", " "), array("", ""), $hp);
+				$hp = preg_replace("/[^a-zA-Z0-9\s]/", "", $hp);
+				if ($wa)
+					if (substr($hp, 0, 1) == "0")
+						$hp = "+62" . substr($hp, 1, strlen($hp));
+				if ($akses) {
+					if ($icon)
+						$retval = $retval . "<img src='" . base_url('assets/img/icon_wa.png') . "' >";
+
+					if ($wa) {
+						if (isMobileDev())
+							$retval = $retval . "<a href='https://wa.me/" . $hp . "' target='_blank'>" . $hp . "</a> ";
+						else
+							$retval = $retval . "<a href='https://web.whatsapp.com/send?phone=" . $hp . "' target='_blank'>" . $hp . "</a> ";
+					} else
+						$retval = $hp;
+				} else
+					$retval = $retval . substr($hp, 0, 4) . "XXXX" . substr($hp, -4) . " ";
+			}
+		}
+		return $retval;
+	}
+}
+
 if (!function_exists('gantikarakter')) {
 	function gantikarakter($sumber, $karakter = "X")
 	{
@@ -482,6 +537,22 @@ if (!function_exists('buildTree')) {
 	}
 }
 
+
+function daftarJabatan()
+{
+	$retVal = ['status' => false, 'db' => []];
+	$CI = &get_instance();
+	$CI->db->from('mst_jabatan');
+	$CI->db->select('*');
+	$CI->db->order_by('urut', 'asc');
+	$sql = $CI->db->get();
+	//echo $CI->db->last_query();
+	if ($sql->num_rows() > 0) {
+		$retVal['status'] = true;
+		$retVal['db'] = $sql->result_array();
+	}
+	return $retVal;
+}
 
 //fungsi loadTahun
 if (!function_exists('loadTahun')) {

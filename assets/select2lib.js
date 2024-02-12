@@ -1,3 +1,5 @@
+  var vTahunApp=2022;
+
   function sel2_datalokal(vselector,vdata=null,vAllowClear=true,vDropDownParent="",vTags=false){
     $(vselector).select2({
       data: vdata,

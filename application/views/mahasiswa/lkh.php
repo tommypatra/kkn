@@ -33,7 +33,7 @@ $title .= "Kelompok " . $ispeserta['namakelompok'] . " desa " . $ispeserta['desa
                 <div class="buttons">
                     <?php if ($ispeserta['ketkkn'] == "terbuka") { ?>
                         <a href="#" class="btn icon btn-success addPage"><i class="bi bi-plus-circle"></i></a>
-                    <? } ?>
+                    <?php } ?>
                     <a href="#" class="btn icon btn-success refreshData"><i class="bi bi-arrow-clockwise"></i></a>
                 </div>
             </div>

@@ -1,4 +1,7 @@
 // Function exec ajax
+var vBase_url = "https://kkn.iainpare.ac.id/";
+var vTimeout = 10000;
+
 function appAjax(vurl, vdata, vasync = true) {
   //var vretval = { status: false, pesan: "" };
   return $.ajax({

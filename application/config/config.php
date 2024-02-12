@@ -387,7 +387,7 @@ $config['sess_driver'] = 'database'; //enable session with db
 $config['sess_save_path'] = 'sessions'; //database table name
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_samesite'] = 'Lax';
-$config['sess_expiration'] = 604800;
+$config['sess_expiration'] = 7200;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
@@ -531,20 +531,10 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
-$config['kampus'] = 'IAIN Parepare';
 $config['app_name'] = 'KKN IAIN Parepare';
 $config['app_singkatan'] = 'KKN';
-
 $config['app_version'] = 'v2.0';
 $config['app_transaction'] = true;
-
-//link pada laman web
-$config['link_dokumentasi'] = 'https://iainpare.ac.id/';
-$config['link_youtube'] = 'https://www.youtube.com/@TVIAINPAREPARE';
-//lokasi yang akan diview default pada map
-$config['app_latitude'] = -4.008333;
-$config['app_longitude'] = 119.629185;
-$config['email_admin'] = 'admin@iainpare.ac.id';
 
 $config['tahunapp'] = 2022;
 $config['ajax_timeout'] = 10000;
@@ -553,4 +543,7 @@ $config['delay'] = 250;
 $config['max_size'] = 4000;
 $config['max_size_output'] = 3000;
 $config['max_size_img'] = 750;
+$config['app_latitude'] = -3.985764;
+$config['app_longitude'] = 119.637289;
+
 date_default_timezone_set('Asia/Makassar');

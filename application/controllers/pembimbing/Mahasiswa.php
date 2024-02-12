@@ -99,6 +99,7 @@ class Mahasiswa extends CI_Controller
         $this->datatables->join("(SELECT idpenempatan,count(id) as jumupload FROM output_penempatan GROUP BY idpenempatan) as lap", "lap.idpenempatan=pm.id", "left");
 
         $this->datatables->where("h.iduser", $this->session->userdata("iduser"));
+        $this->datatables->where("DATE_ADD(NOW(), INTERVAL 8 HOUR)>=k.bagikelompok", null);
         $this->datatables->where("k.tahun", $this->input->post("tahun"));
         $this->datatables->group_by("pm.id");
 

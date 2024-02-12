@@ -58,11 +58,18 @@ function loadTabel() {
         },
         dom: '<"row"<"col-sm-6"B><"col-sm-6"f>> rt <"row"<"col-sm-4"l><"col-sm-4"i><"col-sm-4"p>>',
         buttons: [
-            'copy', 'excel', 'print'
+            'copy', 'excel', 'print',
+            {
+                text: 'Statistik',
+                action: function (e, dt, node, config) {
+                    window.open(vBase_url+'app/pendaftar/statistik/'+$('#idjadwalkkn').val()+'/'+$('#statusmhs').val(),'_blank');
+                }
+            }            
         ],
         "order": [
-            [3, "ASC"],
-            [2, "ASC"],
+            [8, "ASC"],
+            [7, "ASC"],
+            [9, "ASC"],
         ],
         "columns": [
         {
@@ -98,6 +105,21 @@ function loadTabel() {
             "orderable": false,
             "searchable": false
         },
+        {//7
+            "data": "idfakultas",
+            "visible":false,
+            "searchable": false
+        },
+        {
+            "data": "urut",
+            "visible":false,
+            "searchable": false
+        },
+        {
+            "data": "nim",
+            "visible":false,
+            "searchable": false
+        }
         ],
         initComplete: function (e) {
             var api = this.api();
@@ -154,10 +176,10 @@ function loadberkas(){
                 keyboard: false,
             });
             myModal.toggle();
-            if(vRet.berkas_db.length>0)
+            // if(vRet.berkas_db.length>0)
                 $(".simpanVerifikasi").show();
-            else
-                alert("Tidak bisa simpna verifikasi karena administrasi KPM ini belum dilengkapi oleh admin!");
+            // else
+            //     alert("Tidak bisa simpan verifikasi karena administrasi KPM ini belum dilengkapi oleh admin!");
         }
         $(".fmahasiswa").html(vRet.mhs_html);
         $(".fkelengkapan").html(vRet.berkas_html);

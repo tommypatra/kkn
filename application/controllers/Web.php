@@ -389,7 +389,9 @@ class Web extends CI_Controller
             $tmp['prodi'] = $dp['prodi'];
             $tmp['desa'] = $dp['desa'];
             $tmp['dpl'] = $dp['dpl'];
-            $tmp['namakelompok'] = str_pad($dp['namakelompok'], 3, '0', STR_PAD_LEFT);
+
+
+            $tmp['namakelompok'] = isset($dp['namakelompok']) ? str_pad($dp['namakelompok'], 3, '0', STR_PAD_LEFT) : "";
             $tmp['lastlogin'] = $dp['lastlogin'];
 
             $tmp['detmahasiswa'] = "<div class='row'>

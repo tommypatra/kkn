@@ -96,6 +96,7 @@ class Kelompok extends CI_Controller
         $this->datatables->join("kkn as k", "k.id=sp.idkkn", "left");
         $this->datatables->join("hakakses as h", "h.id=p.idhakakses", "left");
         $this->datatables->join("user as u", "u.id=h.iduser", "left");
+        $this->datatables->where("DATE_ADD(NOW(), INTERVAL 8 HOUR)>=k.bagikelompok", null);
         $this->datatables->where("u.id", $this->session->userdata("iduser"));
         $this->datatables->group_by("kel.id");
 

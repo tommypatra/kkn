@@ -83,3 +83,7 @@
     </div>
 </div>
 <!-- full size modal-->
+<script>
+    // console.log('baser url : ');
+    // console.log(vBase_url);
+</script>

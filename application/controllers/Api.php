@@ -43,6 +43,7 @@ class Api extends CI_Controller
         }
         die(json_encode($retVal));
     }
+
     public function cariakun()
     {
         $this->load->library("dataweb");

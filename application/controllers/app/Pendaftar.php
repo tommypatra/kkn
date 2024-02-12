@@ -57,17 +57,57 @@ class Pendaftar extends CI_Controller
         return $runsql->num_rows();
     }
 
+    public function cekPeserta($idkkn = null, $idmhs = [])
+    {
+        $this->db->from("pendaftar as p");
+        $this->db->select(" 
+            k.tema,k.tahun,
+            m.nim, m.id as idmhs,
+            if(t.id IS NOT NULL,'peserta','pendaftar') as status,
+            t.id as idpeserta,
+		");
+        $this->db->join("mahasiswa as m", "m.id=p.idmahasiswa", "left");
+
+        $this->db->join("kkn as k", "k.id=p.idkkn", "left");
+        $this->db->join("peserta as t", "t.idpendaftar=p.id", "left");
+        $this->db->where("YEAR(p.created)", date('Y'));
+        $this->db->where("p.idkkn!=", $idkkn);
+        $this->db->where("t.id IS NOT NULL", null);
+        $this->db->where_in("m.id", $idmhs);
+
+        $runsql = $this->db->get();
+        $tmp = [];
+
+        if ($runsql->num_rows() > 0) {
+            $no = 1;
+            foreach ($runsql->result_array() as $index => $dp) {
+                $no++;
+                $tmp[$dp['idmhs']] = [
+                    "tahun" => $dp['tahun'],
+                    "tema" => $dp['tema'],
+                    "nim" => $dp['nim'],
+                    "idmhs" => $dp['idmhs'],
+                    "idpeserta" => $dp['idpeserta'],
+                    "status" => $dp['status'],
+                ];
+            }
+        }
+        return $tmp;
+    }
 
     public function read()
     {
         $this->load->library('Datatables');
+        $this->load->library("dataweb");
 
         $idkkn = $this->input->post('idkkn');
         $statumhs = $this->input->post('statumhs');
+        $iduser = $this->session->userdata('iduser');
 
         $administrasi_kkn = $this->administrasi_kkn($idkkn);
         $data_verifikasi = $this->data_verifikasi($idkkn);
 
+        //$prodiakses = $this->dataweb->prodiakses($idkkn, $iduser)['db'];
         $this->datatables->from("pendaftar as p");
         $this->datatables->select("
 			'' as cek, '' as no, '' as aksi, 
@@ -75,11 +115,13 @@ class Pendaftar extends CI_Controller
             u.id as iduser, CONCAT(TRIM(CONCAT(u.glrdepan,' ',u.nama,' ',u.glrbelakang)),'/ ',m.nim) as nama, 
             CONCAT(u.hp,'/ ',u.email) as kontak, u.nik, u.kel, u.path as profilpic, u.hp, u.email,
             m.nim,prodi.prodi, fak.fakultas,
+            m.id as idmhs,
             if(t.id IS NOT NULL,'peserta','pendaftar') as status,
             t.id as idpeserta,
+            prodi.urut,fak.id as idfakultas,
 		");
         $this->datatables->join("mahasiswa as m", "m.id=p.idmahasiswa", "left");
-        $this->datatables->join("peserta as ps", "ps.idpendaftar=p.id", "left");
+        // $this->datatables->join("peserta as ps", "ps.idpendaftar=p.id", "left");
         $this->datatables->join("user as u", "u.id=m.iduser", "left");
         $this->datatables->join("mst_prodi as prodi", "m.idprodi=prodi.id", "left");
         $this->datatables->join("mst_fakultas as fak", "fak.id=prodi.idfakultas", "left");
@@ -88,13 +130,25 @@ class Pendaftar extends CI_Controller
         $this->datatables->join("peserta as t", "t.idpendaftar=p.id", "left");
         $this->datatables->where("p.idkkn", $idkkn);
         $this->datatables->where("m.nim IS NOT NULL", null);
+        if ($this->session->userdata('role') != 1) {
+            if (isset($prodiakses[$iduser])) {
+                $listprodi = [];
+                // debug($prodiakses);
+                foreach ($prodiakses[$iduser] as $i => $dp) {
+                    $listprodi[] = $dp['idprodi'];
+                }
+                $this->datatables->where_in("prodi.id", $listprodi);
+            } else {
+                $this->datatables->where("p.idkkn", 0);
+            }
+        }
 
         switch ($statumhs) {
             case 'peserta':
-                $this->datatables->where("ps.id IS NOT NULL", null);
+                $this->datatables->where("t.id IS NOT NULL", null);
                 break;
             case 'pendaftar':
-                $this->datatables->where("ps.id IS NULL", null);
+                $this->datatables->where("t.id IS NULL", null);
                 break;
         }
 
@@ -102,35 +156,55 @@ class Pendaftar extends CI_Controller
         //echo $this->db->last_query();
         $data = array();
         $no = 0;
+
+        $idmhs = [];
+        $datapeserta = [];
+        if (count($retVal['data']) > 0) {
+            foreach ($retVal['data'] as $index => $dp) {
+                $idmhs[] = $dp['idmhs'];
+            }
+            $datapeserta = $this->cekPeserta($idkkn, $idmhs);
+        }
+
         foreach ($retVal['data'] as $index => $dp) {
             $no++;
             $tmp['no'] = $no;
             $tmp['foto'] = "<div class='avatar avatar-xl'><img src='" . base_url($dp['profilpic']) . "' ></div>";
             $tmp['nama'] = $dp['nama'];
             $tmp['kel'] = $dp['kel'];
+            $tmp['urut'] = $dp['urut'];
+            $tmp['nim'] = $dp['nim'];
+            $tmp['idfakultas'] = $dp['idfakultas'];
             $tmp['fakultas'] = $dp['fakultas'] . "/ " . $dp['prodi'];
 
+            $pesertaKknLain = isset($datapeserta[$dp['idmhs']]) ? $datapeserta[$dp['idmhs']] : [];
             $verifikasi = searchMultiArray($data_verifikasi, "idpendaftar", $dp['idpendaftar']);
 
-            $labelVer = '<div><span class="badge bg-secondary">Belum Lengkap</span>';
-            if (count($verifikasi) > 0) {
-                $verifikasi = $verifikasi[0];
-                if ($verifikasi['jumver'] >= $administrasi_kkn) {
-                    $labelVer = '<span class="badge bg-primary">Sudah Verifikasi</span>';
-                    if ($dp['idpeserta'] > 0)
-                        $labelVer = '<span class="badge bg-success">Peserta</span>';
-                    else
-                        $labelVer .= '<span class="badge bg-danger">Bukan Peserta</span>';
-                } else
-                    $labelVer = '<span class="badge bg-info">Belum Verifikasi</span>';
-
+            if (count($pesertaKknLain) > 0) {
+                $labelVer = '<div>
+                                <span class="badge bg-black">Peserta</span>
+                                <span class="badge bg-black">' . $pesertaKknLain['tema'] . '</span>
+                            </div>';
+            } else {
+                $labelVer = '<div><span class="badge bg-secondary">Belum Lengkap</span>';
+                if (count($verifikasi) > 0) {
+                    $verifikasi = $verifikasi[0];
+                    if ($verifikasi['jumver'] >= $administrasi_kkn) {
+                        $labelVer = '<span class="badge bg-primary">Sudah Verifikasi</span>';
+                    } else
+                        $labelVer = '<span class="badge bg-info">Belum Verifikasi</span>';
+                }
+                if ($dp['idpeserta'] > 0)
+                    $labelVer .= '<span class="badge bg-success">Peserta</span>';
+                else
+                    $labelVer .= '<span class="badge bg-danger">Bukan Peserta</span>';
                 //$labelVer .= ' Memenuhi Syarat';
+                $labelVer .= '</div>';
             }
-            $labelVer .= '</div>';
             //$labelVer = '<span class="badge bg-primary">' . $labelVer . '</span>';
 
             //$tmp['status'] = $labelVer; // . " " . print_r($verifikasi);
-            $tmp['kontak'] = $labelVer . "<br>" . $dp['kontak'];
+            $tmp['kontak'] = $labelVer . "<br>" . kirimwa($dp['hp'], true) . "/ " . $dp['email'];
 
             $tmp['aksi'] = "<div class='btn-group me-1 mb-1'>
                                 <div class='dropdown'>
@@ -173,6 +247,73 @@ class Pendaftar extends CI_Controller
         die(json_encode($retVal));
     }
 
+    public function statistik($idkkn = null, $statusmhs = null)
+    {
+        $d['idkkn'] = $idkkn;
+        $d['statusmhs'] = $statusmhs;
+        $this->load->view('statistik/pendaftar', $d);
+    }
+
+    public function getStatistik()
+    {
+        $retVal = $this->retVal;
+
+        $this->load->library("dataweb");
+        $idkkn = $this->input->post('idkkn');
+        $statusmhs = $this->input->post('statusmhs');
+        $iduser = $this->session->userdata('iduser');
+
+        //$prodiakses = $this->dataweb->prodiakses($idkkn, $iduser)['db'];
+        $this->db->from("pendaftar as p");
+        $this->db->select("
+            prodi.prodi, fak.fakultas,
+            SUM(if(u.kel='L',1,0)) as pria,
+            SUM(if(u.kel='P',1,0)) as wanita,
+            COUNT(p.id) as jumlah,
+		");
+        $this->db->join("mahasiswa as m", "m.id=p.idmahasiswa", "left");
+        $this->db->join("peserta as ps", "ps.idpendaftar=p.id", "left");
+        $this->db->join("user as u", "u.id=m.iduser", "left");
+        $this->db->join("mst_prodi as prodi", "m.idprodi=prodi.id", "left");
+        $this->db->join("mst_fakultas as fak", "fak.id=prodi.idfakultas", "left");
+
+        $this->db->join("kkn as k", "k.id=p.idkkn", "left");
+        $this->db->join("peserta as t", "t.idpendaftar=p.id", "left");
+        $this->db->where("p.idkkn", $idkkn);
+        $this->db->group_by("p.idkkn");
+        $this->db->group_by("prodi.id");
+        $this->db->order_by("fak.id", "ASC");
+        $this->db->order_by("prodi.urut", "ASC");
+
+        if ($this->session->userdata('role') != 1) {
+            if (isset($prodiakses[$iduser])) {
+                $listprodi = [];
+                foreach ($prodiakses[$iduser] as $i => $dp) {
+                    $listprodi[] = $dp['idprodi'];
+                }
+                $this->db->where_in("prodi.id", $listprodi);
+            } else {
+                $this->db->where("p.idkkn", 0);
+            }
+        }
+
+        switch ($statusmhs) {
+            case 'peserta':
+                $this->db->where("ps.id IS NOT NULL", null);
+                break;
+            case 'pendaftar':
+                $this->db->where("ps.id IS NULL", null);
+                break;
+        }
+
+        $sql = $this->db->get();
+        if ($sql->num_rows() > 0) {
+            $retVal['status'] = true;
+            $retVal['db'] = $sql->result_array();
+        }
+        die(json_encode($retVal));
+    }
+
     public function delete()
     {
         $retVal = array("status" => false, "pesan" => [], "login" => true);
@@ -187,7 +328,7 @@ class Pendaftar extends CI_Controller
             $retVal = $this->Model_data->delete($kond, "peserta", null, true);
 
             if ($retVal['status']) {
-                $updateSQL = "UPDATE berkas_administrasi SET status='TMS' WHERE idpendaftar='" . $idpendaftar . "'";
+                $updateSQL = "UPDATE berkas_administrasi SET status=null WHERE idpendaftar='" . $idpendaftar . "'";
                 $this->Model_data->runQuery($updateSQL);
             }
         }
@@ -265,22 +406,23 @@ class Pendaftar extends CI_Controller
         $statuspeserta = $dataform['statuspeserta'];
 
         if ($this->form_validation->run()) {
-            $idupload = $dataform['idupload'];
-            $idadministrasi = $dataform['idadministrasi'];
+            $idupload = isset($dataform['idupload']) ? $dataform['idupload'] : null;
+            $idadministrasi = isset($dataform['idadministrasi']) ? $dataform['idadministrasi'] : null;
             $vstatus = "MS";
-            foreach ($dataform['verBerkas'] as $i => $dp) {
-                if ($dp <> "MS")
-                    $vstatus = "TMS";
+            if ($idupload && $idadministrasi)
+                foreach ($dataform['verBerkas'] as $i => $dp) {
+                    if ($dp <> "MS")
+                        $vstatus = "TMS";
 
-                $id = $idupload[$i];
-                $dataSave = array(
-                    "idadministrasi" => $idadministrasi[$i],
-                    "idpendaftar" => $idpendaftar,
-                    "status" => $dp,
-                );
+                    $id = $idupload[$i];
+                    $dataSave = array(
+                        "idadministrasi" => $idadministrasi[$i],
+                        "idpendaftar" => $idpendaftar,
+                        "status" => $dp,
+                    );
 
-                if ($id == "" && akses_akun("insert", $this->otentikasi)->status) {
-                    /*
+                    if ($id == "" && akses_akun("insert", $this->otentikasi)->status) {
+                        /*
                     if ($ispeserta) {
                         $retVal['pesan'] = ["Maaf, mahasiswa an. " . $pesertadt['nama'] . " pada tahun " . $pesertadt['tahun'] . " sudah menjadi peserta pada KPM " . $pesertadt['tema']];
                         $retVal['status'] = false;
@@ -288,16 +430,16 @@ class Pendaftar extends CI_Controller
                     }
                     */
 
-                    $retVal = $this->Model_data->save($dataSave, "berkas_administrasi", "verifikasi administrasi", true);
-                } elseif ($id <> "" && akses_akun("update", $this->otentikasi, "berkas_administrasi", $id)->status) {
-                    $kond = array(
-                        array("where", "id", $id),
-                    );
-                    $retVal = $this->Model_data->update($kond, $dataSave, "berkas_administrasi", "verifikasi administrasi", true);
-                } else {
-                    $retVal['pesan'] = "Maaf, akses ditolak";
+                        $retVal = $this->Model_data->save($dataSave, "berkas_administrasi", "verifikasi administrasi", true);
+                    } elseif ($id <> "" && akses_akun("update", $this->otentikasi, "berkas_administrasi", $id)->status) {
+                        $kond = array(
+                            array("where", "id", $id),
+                        );
+                        $retVal = $this->Model_data->update($kond, $dataSave, "berkas_administrasi", "verifikasi administrasi", true);
+                    } else {
+                        $retVal['pesan'] = "Maaf, akses ditolak";
+                    }
                 }
-            }
         } else {
             $retVal['pesan'] = $this->form_validation->error_array();
             $retVal['status'] = false;
@@ -310,8 +452,8 @@ class Pendaftar extends CI_Controller
             $simpan = true;
             if ($dbpeserta['status']) {
                 $detpeserta = $dbpeserta['db'][0];
-                //echo $idpendaftar . " " . $detpeserta['idpendaftar'];
-                //die;
+                // echo $idpendaftar . " " . $detpeserta['idpendaftar'];
+                // die;
                 if ($detpeserta['idpendaftar'] != $idpendaftar) {
                     $retVal['pesan'] = ["Gagal menjadi peserta karena telah terdaftar sebagai peserta pada " . $detpeserta['tema'] . "! hapus terlebih dahulu pada kkn sebelumnya"];
                     $retVal['status'] = false;
@@ -328,6 +470,8 @@ class Pendaftar extends CI_Controller
                     "idpendaftar" => $idpendaftar,
                 );
                 $retVal = $this->Model_data->save($dataSave, "peserta", "penetapan peserta", true);
+            } else {
+                // echo "tidak ada";
             }
         } else {
             $kond = array(

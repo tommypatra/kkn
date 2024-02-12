@@ -224,6 +224,7 @@ class Penempatan extends CI_Controller
             $no++;
             $tmp['cek'] = "<input type='checkbox' class='cekbaris2'  data-pilih='" . $no . "' id='cek" . $no . "' name='pilihcek[" . $no . "]' value='" . $dp['idpeserta'] . "'>";
             $tmp['no'] = $no;
+            $desa = isset($dp['desa']) ? $dp['desa'] : "";
             $tmp['fldview'] = "<div class='row'>
                                     <div class='col-md-2'>
                                         <div class='avatar avatar-xl' style='vertical-align: top;'><img src='" . base_url($dp['profilpic']) . "' ></div>                                        
@@ -232,7 +233,7 @@ class Penempatan extends CI_Controller
                                         <b>" . $dp['nama'] . "</b></br>
                                         NIM. " . $dp['nim'] . "</br>
                                         " . $dp['prodi'] . "</br>
-                                        " . strtoupper($dp['desa']) . "
+                                        " . strtoupper($desa) . "
                                     </div>    
                                 </div>";
             $tmp['selectjabatan'] = $this->htmlselectjabatan($mstjabatan, $no);

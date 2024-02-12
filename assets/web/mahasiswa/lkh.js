@@ -102,10 +102,14 @@ function loadTabel() {
         {
             "data": "estbiaya",
             "width": "10%",
+            "orderable": false,
+            "searchable": false
         },
         {
             "data": "foto",
             "width": "10%",
+            "orderable": false,
+            "searchable": false
         },
         {
             "data": "waktu",
@@ -119,10 +123,14 @@ function loadTabel() {
         {
             "data": "jummhs",
             "visible": false,
+            "orderable": false,
+            "searchable": false
         },
         {
             "data": "jummasyarakat",
             "visible": false,
+            "orderable": false,
+            "searchable": false
         },
         ],
         initComplete: function (e) {

@@ -40,6 +40,10 @@ class Penilaian extends CI_Controller
             loadPlugins("myapp"),
         );
 
+        // $this->d['mstjabatan'] = daftarJabatan();
+        $this->d['mstjabatan'] = $this->dataweb->datajabatan([], null, null, "DESC");
+
+        // debug($d['mst_jabatan']);
         $this->d['web']['importJs'] = array(
             base_url('assets/web/app/penilaian.js?' . date("ymdhis")),
         );
